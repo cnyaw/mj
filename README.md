@@ -1,6 +1,6 @@
 # A simple multiplayer mahjong game demo
 
-* Implement 16 cards taiwan mahjong game
+* implement 16 cards taiwan mahjong game
 * http connection support
 * websocket connection support
 * console test client
