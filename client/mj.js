@@ -107,6 +107,13 @@ function str2ab(str) {
   return new Uint8Array(arr);
 }
 
+function darkGameView(ctx2d) {
+  ctx2d.globalAlpha = 0.65;
+  ctx2d.fillStyle = 'black';
+  ctx2d.fillRect(0, 0, SW, SH);
+  ctx2d.globalAlpha = 1.0;
+}
+
 function WebSocketTest()
 {
   var output = document.getElementById("output");
@@ -295,6 +302,7 @@ function WebSocketTest()
           posPick = pos;
           pick = cmd[3];
           renderGame();
+          darkGameView(ctx2d);
           ctx2d.font = '32pt bold';
           ctx2d.textAlign = 'center';
           ctx2d.fillStyle = 'red';
@@ -351,6 +359,7 @@ function WebSocketTest()
           }
           break;
         case 9:                         // End.
+          darkGameView(ctx2d);
           ctx2d.font = '46pt bold';
           ctx2d.textAlign = 'center';
           ctx2d.fillStyle = 'red';
