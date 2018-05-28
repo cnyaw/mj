@@ -872,7 +872,7 @@ public class MahjongGame {
 
     Vector p = player[active];
 
-    Vector c[] = new Vector[4];
+    Vector c[] = new Vector[5];
     for (int i = 0; i < c.length; i++) {
       c[i] = new Vector();
     }
