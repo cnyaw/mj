@@ -223,7 +223,7 @@ public class MahjongScore
      }
 
      //手上牌進行排序
-     sort(p);
+     MahjongGame.sort(p);
      //整合傳入一般牌
      pCard=new int[p.size()];
      for(int i=0;i<pCard.length;i++)
@@ -849,18 +849,5 @@ public class MahjongScore
          break;
        }
      }
-   }
-
-   void sort(Vector cards) {
-     int n = cards.size();
-     for (int i = 0; i < n - 1; i++)
-       for (int j = 0; j < n - i - 1; j++) {
-         Integer a = (Integer)cards.elementAt(j);
-         Integer b = (Integer)cards.elementAt(j + 1);
-         if (a.intValue() > b.intValue()) {
-           cards.setElementAt(a, j + 1);
-           cards.setElementAt(b, j);
-         }
-       }
    }
 }

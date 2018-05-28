@@ -1867,7 +1867,7 @@ public class MahjongGame {
   // 泡沬排序
   //
 
-  void sort(Vector cards) {
+  static public void sort(Vector cards) {
     int n = cards.size();
     for (int i = 0; i < n - 1; i++) {
       for (int j = 0; j < n - i - 1; j++) {
