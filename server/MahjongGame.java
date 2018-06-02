@@ -16,6 +16,7 @@ public class MahjongGame {
   //
 
   public static final int NUM_PLAYER = 4;     // 玩家數目.
+  public static final int NUM_COLOR = 5;      // 花色數目.
 
   public static final int AI_FAIL = 0;        // 錯誤(順位)
   public static final int AI_PASS = 1;        // pass
@@ -872,23 +873,14 @@ public class MahjongGame {
 
     Vector p = player[active];
 
-    Vector c[] = new Vector[5];
+    Vector c[] = new Vector[NUM_COLOR];
     for (int i = 0; i < c.length; i++) {
       c[i] = new Vector();
     }
 
-    try {
-      for (int i = 0; i < p.size(); i++) {
-        int A = ((Integer)p.elementAt(i)).intValue();
-        c[MJCOLOR(A)].addElement(new Integer(MJNUM(A)));
-      }
-    } catch (Exception e) {
-      for (int i = 0; i < p.size(); i++) {
-        System.out.print(MahjongGameTest.TransCard(((Integer)p.elementAt(i)).intValue()) + " ");
-      }
-      System.out.println("");
-      e.printStackTrace();
-      c[5] = c[1];
+    for (int i = 0; i < p.size(); i++) {
+      int A = ((Integer)p.elementAt(i)).intValue();
+      c[MJCOLOR(A)].addElement(new Integer(MJNUM(A)));
     }
 
     //
