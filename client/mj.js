@@ -107,6 +107,10 @@ function str2ab(str) {
   return new Uint8Array(arr);
 }
 
+function send(ws, str) {
+  ws.send(str2ab(str));
+}
+
 function darkGameView(ctx2d) {
   ctx2d.globalAlpha = 0.65;
   ctx2d.fillStyle = 'black';
@@ -132,9 +136,8 @@ function WebSocketTest()
 
   ws.onopen = function (evt) {
     writeToScreen("CONNECTED");
-    var b = str2ab(encodeURIComponent(document.getElementById('nickname').value));
-    ws.send(b);
-    tHeartBeat = setInterval(function(){ ws.send(str2ab('11')); }, 8000);
+    send(ws, encodeURIComponent(document.getElementById('nickname').value));
+    tHeartBeat = setInterval(function(){ send(ws, '11'); }, 8000);
   };
 
   ws.onclose = function (evt) {
@@ -181,7 +184,7 @@ function WebSocketTest()
         //
 
         if (!inGame && 0 == cmd[6]) {
-          ws.send(str2ab('35,' + cmd[1]));
+          send(ws, '35,' + cmd[1]);
           inGame = true
           writeToScreen('<span style="color:blue;">Join game: ' + cmd[1] + '</span>');
         }
