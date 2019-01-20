@@ -475,13 +475,7 @@ public class MahjongServer {
       return;
     }
 
-    String sCmd = MahjongProtocol.getPlayerLeaveCmd(u.id);
-
-    for (int i = 0; i < aur.length; i++) {
-      if (null != aur[i]) {
-        usend(aur[i], sCmd);
-      }
-    }
+    usendAll(null, MahjongProtocol.getPlayerLeaveCmd(u.id));
   }
 
   //
@@ -574,13 +568,7 @@ public class MahjongServer {
     // Notify new player to all clients.
     //
 
-    String sCmd = MahjongProtocol.getNewPlayerCmd(u.id, u.token);
-
-    for (int i = 0; i < aur.length; i++) {
-      if (null != aur[i] && u != aur[i]) {
-        usend(aur[i], sCmd);
-      }
-    }
+    usendAll(u, MahjongProtocol.getNewPlayerCmd(u.id, u.token));
 
     //
     // Send current game list to this new connection.
@@ -759,13 +747,7 @@ public class MahjongServer {
     // Notify all clients a new game is created.
     //
 
-    String sCmd = MahjongProtocol.getNewGameCmd(g.id, new int[]{u.id, -1, -1, -1}, false);
-
-    for (int i = 0; i < aur.length; i++) {
-      if (null != aur[i]) {
-        usend(aur[i], sCmd);
-      }
-    }
+    usendAll(null, MahjongProtocol.getNewGameCmd(g.id, new int[]{u.id, -1, -1, -1}, false));
 
     return true;
   }
@@ -849,13 +831,7 @@ public class MahjongServer {
     // Notify all clients.
     //
 
-    String sCmd = MahjongProtocol.getJoinGameCmd(g.id, u.id, pos);
-
-    for (int i = 0; i < aur.length; i++) {
-      if (null != aur[i]) {
-        usend(aur[i], sCmd);
-      }
-    }
+    usendAll(null, MahjongProtocol.getJoinGameCmd(g.id, u.id, pos));
 
     return true;
   }
@@ -911,13 +887,7 @@ public class MahjongServer {
     // Notify all clients a player leave game.
     //
 
-    String sCmd = MahjongProtocol.getLeaveGameCmd(g.id, destroy ? -1 : u.id);
-
-    for (int i = 0; i < aur.length; i++) {
-      if (null != aur[i]) {
-        usend(aur[i], sCmd);
-      }
-    }
+    usendAll(null, MahjongProtocol.getLeaveGameCmd(g.id, destroy ? -1 : u.id));
 
     //
     // If the player is the game creater(pos 0) then destroy this game.
@@ -994,13 +964,7 @@ public class MahjongServer {
     // Notify all clients game starts.
     //
 
-    String sCmd = MahjongProtocol.getStartGameCmd(g.id);
-
-    for (int i = 0; i < aur.length; i++) {
-      if (null != aur[i]) {
-        usend(aur[i], sCmd);
-      }
-    }
+    usendAll(null, MahjongProtocol.getStartGameCmd(g.id));
 
     PrintLog("Game [" + g.id + "] start!!!\n");
 
@@ -1556,13 +1520,7 @@ public class MahjongServer {
     // Notify game is closed.
     //
 
-    String sCmd = MahjongProtocol.getLeaveGameCmd(g.id, g.iAur[0]);
-
-    for (int i = 0; i < aur.length; i++) {
-      if (null != aur[i]) {
-        usend(aur[i], sCmd);
-      }
-    }
+    usendAll(null, MahjongProtocol.getLeaveGameCmd(g.id, g.iAur[0]));
 
     return true;
   }
@@ -1636,7 +1594,6 @@ public class MahjongServer {
           }
         }
       }
-
     }
 
     return true;
@@ -1710,14 +1667,12 @@ public class MahjongServer {
 
     for (int i = 0; i < g.iAur.length; i++) {
       if (-1 != g.iAur[i]) {
-
         String s = sCmd;
         for (int j = 0; j < 4; j++) {
           if (j != i) {
             s = s + sPlayer[j];
           }
         }
-
         usend(aur[g.iAur[i]], s);
       }
     }
@@ -1875,11 +1830,9 @@ public class MahjongServer {
     //
 
     for (int i = 0; i < g.iAur.length; i++) {
-
       if (-1 == g.iAur[i]) {
         continue;
       }
-
       if (iPlayer == i) {
         usend(aur[g.iAur[i]], sCmd1);
       } else {
@@ -1925,6 +1878,14 @@ public class MahjongServer {
       return MahjongProtocol.websockSend(u.os, msg);
     default:
       return false;
+    }
+  }
+
+  void usendAll(AUR except, String msg) {
+    for (int i = 0; i < aur.length; i++) {
+      if (null != aur[i] && except != aur[i]) {
+        usend(aur[i], msg);
+      }
     }
   }
 
