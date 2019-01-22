@@ -1008,7 +1008,7 @@ public class MahjongServer {
 
     if (MahjongGame.AI_PASS == action) {
       if (g.mj.pass()) {
-        playGame2(g, active, action, 0);
+        playGame_i(g, active, action, 0);
         sendNextGameState(g);
         resetTimer(g);
         return true;
@@ -1024,7 +1024,7 @@ public class MahjongServer {
     else if (MahjongGame.AI_EXCHANGE == action) {
       card = Integer.parseInt(items[2]);
       if (g.mj.exchange(card)) {
-        playGame2(g, active, action, card);
+        playGame_i(g, active, action, card);
         sendNextGameState(g);
         resetTimer(g);
         return true;
@@ -1040,7 +1040,7 @@ public class MahjongServer {
     else if (MahjongGame.AI_CHI == action) {
       card = Integer.parseInt(items[2]);
       if (g.mj.chi(card)) {
-        playGame2(g, active, action, card);
+        playGame_i(g, active, action, card);
         resetTimer(g);
         return true;
       } else {
@@ -1055,7 +1055,7 @@ public class MahjongServer {
     else if (MahjongGame.AI_PON == action) {
       card = g.mj.getLastHdCard();
       if (g.mj.pon()) {
-        playGame2(g, active, action, card);
+        playGame_i(g, active, action, card);
         resetTimer(g);
         return true;
       } else {
@@ -1070,7 +1070,7 @@ public class MahjongServer {
     else if (MahjongGame.AI_GUN == action) {
       card = Integer.parseInt(items[2]);
       if (g.mj.gun(card)) {
-        playGame2(g, active, action, card);
+        playGame_i(g, active, action, card);
         resetTimer(g);
         return true;
       } else {
@@ -1088,7 +1088,7 @@ public class MahjongServer {
         if (0 == card) {
           card = g.mj.getLastHdCard();
         }
-        playGame2(g, active, action, card);
+        playGame_i(g, active, action, card);
         g.mj.mjOpen.winner = active;
         g.newPlay = true;
         return true;
@@ -1104,7 +1104,7 @@ public class MahjongServer {
     else if (MahjongGame.AI_TIN == action) {
       card = Integer.parseInt(items[2]);
       if (g.mj.tin(card)) {
-        playGame2(g, active, action, card);
+        playGame_i(g, active, action, card);
         sendNextGameState(g);
         resetTimer(g);
       } else {
@@ -1129,7 +1129,7 @@ public class MahjongServer {
   // Handle play game inner.
   //
 
-  boolean playGame2(AGR g, int active, int action, int card) {
+  boolean playGame_i(AGR g, int active, int action, int card) {
 
     //
     // Pass.
@@ -1313,24 +1313,24 @@ public class MahjongServer {
           switch (g.mj.ai())
           {
           case MahjongGame.AI_PASS:
-            playGame2(g, active, MahjongGame.AI_PASS, 0);
+            playGame_i(g, active, MahjongGame.AI_PASS, 0);
             sendNextGameState(g);
             break;
           case MahjongGame.AI_EXCHANGE:
-            playGame2(g, active, MahjongGame.AI_EXCHANGE, g.mj.aiCard);
+            playGame_i(g, active, MahjongGame.AI_EXCHANGE, g.mj.aiCard);
             sendNextGameState(g);
             break;
           case MahjongGame.AI_CHI:
-            playGame2(g, active, MahjongGame.AI_CHI, g.mj.aiCard);
+            playGame_i(g, active, MahjongGame.AI_CHI, g.mj.aiCard);
             break;
           case MahjongGame.AI_PON:
-            playGame2(g, active, MahjongGame.AI_PON, g.mj.aiCard);
+            playGame_i(g, active, MahjongGame.AI_PON, g.mj.aiCard);
             break;
           case MahjongGame.AI_GUN:
-            playGame2(g, active, MahjongGame.AI_GUN, g.mj.aiCard);
+            playGame_i(g, active, MahjongGame.AI_GUN, g.mj.aiCard);
             break;
           case MahjongGame.AI_LON:
-            playGame2(g, active, MahjongGame.AI_LON, g.mj.aiCard);
+            playGame_i(g, active, MahjongGame.AI_LON, g.mj.aiCard);
             g.mj.mjOpen.winner = active;
             g.newPlay = true;
             break;
