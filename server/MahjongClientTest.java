@@ -265,7 +265,7 @@ public class MahjongClientTest {
               for (int i = 0; i < 3; i++) {
                 int who = Integer.parseInt(items[idx++]);
                 count = Integer.parseInt(items[idx++]);
-                System.out.print("玩家" + (1 + who) + ":");
+                System.out.print("玩家" + who + ":");
                 for (int j = idx; j < idx + count; j++) {
                   c = Integer.parseInt(items[j]);
                   System.out.print(MahjongGameTest.TransCard(c));

@@ -863,7 +863,10 @@ public class MahjongGame {
     //
 
     if (0 != (state[active] & MJ_CANLON)) { // 胡
-      lon();
+      aiCard = getPick();
+      if (0 == aiCard) {
+        aiCard = getLastHdCard();
+      }
       return AI_LON;
     }
 
