@@ -137,7 +137,7 @@ public class MahjongServer {
 
     log = new FileWriter(
                 "" + cal.get(Calendar.YEAR) +
-                "-" + cal.get(Calendar.MONTH) +
+                "-" + (1 + cal.get(Calendar.MONTH)) +
                 "-" + cal.get(Calendar.DAY_OF_MONTH) +
                 "-MjSvr.log",
                 true);
