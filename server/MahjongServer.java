@@ -81,6 +81,7 @@ public class MahjongServer {
   //
 
   static final String SERVER_NAME = "Mahjong Game Server";
+  static final String LOG_PATH = "./log/";
 
   static final int SERVER_PORT = 18800;
   static final int WEBSOCKET_SERVER_PORT = 18802;
@@ -135,8 +136,13 @@ public class MahjongServer {
 
     Calendar cal = Calendar.getInstance();
 
+    File dirLog = new File(LOG_PATH);
+    if (!dirLog.exists()){
+      dirLog.mkdir();
+    }
+
     log = new FileWriter(
-                "" + cal.get(Calendar.YEAR) +
+                LOG_PATH + cal.get(Calendar.YEAR) +
                 "-" + (1 + cal.get(Calendar.MONTH)) +
                 "-" + cal.get(Calendar.DAY_OF_MONTH) +
                 "-MjSvr.log",
