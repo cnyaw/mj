@@ -99,7 +99,6 @@ public class MahjongServer {
   // Members.
   //
 
-  int nSq;
   Socket sq[];                          // Queue for pending new connections.
 
   int nAur;
@@ -137,7 +136,7 @@ public class MahjongServer {
     Calendar cal = Calendar.getInstance();
 
     File dirLog = new File(LOG_PATH);
-    if (!dirLog.exists()){
+    if (!dirLog.exists()) {
       dirLog.mkdir();
     }
 
@@ -154,7 +153,6 @@ public class MahjongServer {
 
     upTime = new Date();
 
-    nSq = 0;
     sq = new Socket[MAX_SOCK_QUEUE];
     for (int i = 0; i < sq.length; i++) {
       sq[i] = null;
@@ -203,12 +201,10 @@ public class MahjongServer {
         // is failed then destroy the connection.
         //
 
-        if (0 != nSq) {
-          for (int i = 0; i < sq.length; i++) {
-            if (null != sq[i]) {
-              AUR u = newAur(sq[i]);
-              sq[i] = null;             // Set handed.
-            }
+        for (int i = 0; i < sq.length; i++) {
+          if (null != sq[i]) {
+            AUR u = newAur(sq[i]);
+            sq[i] = null;               // Set handed.
           }
         }
       }
@@ -249,36 +245,30 @@ public class MahjongServer {
     synchronized (sq) {
 
       //
-      // Is pending socket pool full?
-      //
-
-      if (sq.length == nSq) {
-        PrintLog("Pending connection queue is full, disconnect!!!\n");
-
-        AUR u = new AUR();
-        u.s = s;
-        u.os = s.getOutputStream();
-
-        usend(u, MahjongProtocol.getServerIsBusyCmd());
-
-        u.os.close();
-        s.close();
-
-        return;
-      }
-
-      //
-      // Add new connection socket to the queue.
+      // Try to add new connection socket to the queue to an empty slot.
       //
 
       for (int i = 0; i < sq.length; i++) {
         if (null == sq[i]) {
           sq[i] = s;
-          break;
+          return;
         }
       }
 
-      nSq += 1;
+      //
+      // Pending socket pool is full.
+      //
+
+      PrintLog("Pending connection queue is full, disconnect!!!\n");
+
+      AUR u = new AUR();
+      u.s = s;
+      u.os = s.getOutputStream();
+
+      usend(u, MahjongProtocol.getServerIsBusyCmd());
+
+      u.os.close();
+      s.close();
     }
   }
 
