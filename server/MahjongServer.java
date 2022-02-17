@@ -516,9 +516,6 @@ public class MahjongServer {
     u.iAgr = -1;
     u.token = MahjongProtocol.INIT_TOKEN; // Not verified login.
 
-    s.setTcpNoDelay(true);
-    s.setKeepAlive(true);
-
     u.s = s;
     u.is = s.getInputStream();
     u.os = s.getOutputStream();
