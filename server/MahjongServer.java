@@ -383,7 +383,7 @@ public class MahjongServer {
         String keyAccept = getWebsockAcceptKey(request);
         if (null == keyAccept) {
           s.close();
-          break;
+          continue;
         }
 
         //
