@@ -1227,6 +1227,42 @@ public class MahjongServer {
   }
 
   //
+  // Auto play game by AI.
+  //
+
+  void autoPlayGame(AGR g) {
+
+    int active = g.mj.getActive();
+    int action = g.mj.ai();
+
+    switch (action)
+    {
+    case MahjongGame.AI_PASS:
+      playGame_i(g, active, action, 0);
+      sendNextGameState(g);
+      break;
+    case MahjongGame.AI_EXCHANGE:
+      playGame_i(g, active, action, g.mj.aiCard);
+      sendNextGameState(g);
+      break;
+    case MahjongGame.AI_CHI:
+      playGame_i(g, active, action, g.mj.aiCard);
+      break;
+    case MahjongGame.AI_PON:
+      playGame_i(g, active, action, g.mj.aiCard);
+      break;
+    case MahjongGame.AI_GUN:
+      playGame_i(g, active, action, g.mj.aiCard);
+      break;
+    case MahjongGame.AI_LON:
+      playGame_i(g, active, action, g.mj.aiCard);
+      g.mj.mjOpen.winner = active;
+      g.newPlay = true;
+      break;
+    }
+  }
+
+  //
   // Handle mahjong game play.
   //
 
@@ -1303,31 +1339,8 @@ public class MahjongServer {
           // Process by AI.
           //
 
-          switch (g.mj.ai())
-          {
-          case MahjongGame.AI_PASS:
-            playGame_i(g, active, MahjongGame.AI_PASS, 0);
-            sendNextGameState(g);
-            break;
-          case MahjongGame.AI_EXCHANGE:
-            playGame_i(g, active, MahjongGame.AI_EXCHANGE, g.mj.aiCard);
-            sendNextGameState(g);
-            break;
-          case MahjongGame.AI_CHI:
-            playGame_i(g, active, MahjongGame.AI_CHI, g.mj.aiCard);
-            break;
-          case MahjongGame.AI_PON:
-            playGame_i(g, active, MahjongGame.AI_PON, g.mj.aiCard);
-            break;
-          case MahjongGame.AI_GUN:
-            playGame_i(g, active, MahjongGame.AI_GUN, g.mj.aiCard);
-            break;
-          case MahjongGame.AI_LON:
-            playGame_i(g, active, MahjongGame.AI_LON, g.mj.aiCard);
-            g.mj.mjOpen.winner = active;
-            g.newPlay = true;
-            break;
-          }
+          autoPlayGame(g);
+
         }
 
         //
