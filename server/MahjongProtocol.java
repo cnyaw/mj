@@ -228,6 +228,18 @@ public class MahjongProtocol {
   }
 
   //
+  // C_ENABLE_AUTO_PLAY
+  //      Toggle auto play by AI.
+  // Format: Cmd, 0(disable)/1(enable)
+  //
+
+  public static final byte C_ENABLE_AUTO_PLAY = 0x35;
+
+  public static String getEnableAutoPlayCmd(boolean enable) {
+    return Integer.toString(C_ENABLE_AUTO_PLAY) + "," + (enable ? "1" : "0");
+  }
+
+  //
   // Send a packet. A packet is in the form of: LenStrData(1) StrData(n)
   // CheckSum(1) The first byte is the length of the StrDat. The sum of
   // all bytes in the StrData and the check sum byte will be 0.

@@ -40,6 +40,7 @@ public class MahjongClientTest {
     int MyId = -1;
     int MyGameId = -1;
     boolean GameStart = false;
+    boolean IsAutoPlay = false;
     long timeNewGame = System.currentTimeMillis() + 1000 * 5;
 
     int Games[][] = new int[MahjongServer.MAX_AGR][];
@@ -330,6 +331,15 @@ public class MahjongClientTest {
             JoinGameId = -1;
             GameStart = false;
           }
+        }
+
+        //
+        // Enable auto play if in game.
+        //
+
+        if (-1 != MyGameId && !IsAutoPlay) {
+          MahjongProtocol.tcpipSend(os, MahjongProtocol.getEnableAutoPlayCmd(true));
+          IsAutoPlay = true;
         }
 
         //

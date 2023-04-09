@@ -38,6 +38,7 @@ class AUR {
   Date upTime;                          // Login time.
 
   int iAgr;                             // AGR index, -1 for invalid.
+  boolean auto;                         // Auto play game by AI.
 } // AUR
 
 //
@@ -93,7 +94,7 @@ public class MahjongServer {
   static final int TIMEOUT_KEEP_ALIVE = 8;
 
   static final int TIMEOUT_AI_PLAY_GAME = 1;
-  static final int TIMEOUT_PLAY_GAME = 1;
+  static final int TIMEOUT_PLAY_GAME = 10;
 
   //
   // Members.
@@ -515,6 +516,7 @@ public class MahjongServer {
     u.upTime = new Date();
     u.iAgr = -1;
     u.token = MahjongProtocol.INIT_TOKEN; // Not verified login.
+    u.auto = false;
 
     u.s = s;
     u.is = s.getInputStream();
@@ -667,11 +669,19 @@ public class MahjongServer {
     }
 
     //
+    // Toggle auto play.
+    //
+
+    else if (MahjongProtocol.C_ENABLE_AUTO_PLAY == cmd) {
+      toggleAutoPlay(u, items);
+    }
+
+    //
     // Invalid command.
     //
 
     else {
-      PrintLog("<--AUR [" + u.id + "] KICK, invalid command!\n");
+      PrintLog("<--AUR [" + u.id + "] KICK, invalid command! (" + cmd + ")\n");
       closeAur(u);
     }
   }
@@ -1230,6 +1240,11 @@ public class MahjongServer {
   // Auto play game by AI.
   //
 
+  void toggleAutoPlay(AUR u, String items[]) {
+    boolean auto = 0 != Integer.parseInt(items[1]) ? true : false;
+    u.auto = auto;
+  }
+
   void autoPlayGame(AGR g) {
 
     int active = g.mj.getActive();
@@ -1307,12 +1322,12 @@ public class MahjongServer {
     }
 
     //
-    // If the active player is not in the game then AI takes control.
+    // If the active player is not in the game or auto play is enabled then AI takes control.
     //
 
     int active = g.mj.getActive();
 
-    if (-1 == g.iAur[active]) {
+    if (-1 == g.iAur[active] || aur[g.iAur[active]].auto) {
 
       //
       // Every 1 second.
