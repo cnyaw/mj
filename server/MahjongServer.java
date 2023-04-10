@@ -82,7 +82,6 @@ public class MahjongServer {
   //
 
   static final String SERVER_NAME = "Mahjong Game Server";
-  static final String LOG_PATH = "./log/";
 
   static final int SERVER_PORT = 18800;
   static final int WEBSOCKET_SERVER_PORT = 18802;
@@ -109,7 +108,7 @@ public class MahjongServer {
   AGR agr[];                            // AGR(Active Game Record) pool.
 
   Date upTime;                          // Startup time.
-  FileWriter log;                       // Log file.
+  MahjongLog log = new MahjongLog();    // Log file.
 
   //
   // Entry point.
@@ -129,24 +128,6 @@ public class MahjongServer {
   //
 
   public MahjongServer() throws Exception {
-
-    //
-    // Create log file.
-    //
-
-    Calendar cal = Calendar.getInstance();
-
-    File dirLog = new File(LOG_PATH);
-    if (!dirLog.exists()) {
-      dirLog.mkdir();
-    }
-
-    log = new FileWriter(
-                LOG_PATH + cal.get(Calendar.YEAR) +
-                "-" + (1 + cal.get(Calendar.MONTH)) +
-                "-" + cal.get(Calendar.DAY_OF_MONTH) +
-                "-MjSvr.log",
-                true);
 
     //
     // Initialize pools and tartup server.
@@ -171,8 +152,8 @@ public class MahjongServer {
       agr[i] = null;
     }
 
-    PrintLog(SERVER_NAME + " Startup!!\n");
-    PrintLog("Ready for requests, listen port: " + SERVER_PORT + "," + WEBSOCKET_SERVER_PORT + "...\n");
+    log.PrintLog(SERVER_NAME + " Startup!!\n");
+    log.PrintLog("Ready for requests, listen port: " + SERVER_PORT + "," + WEBSOCKET_SERVER_PORT + "...\n");
 
     //
     // Startup a thread for waiting new connection. A new connection will put
@@ -260,7 +241,7 @@ public class MahjongServer {
       // Pending socket pool is full.
       //
 
-      PrintLog("Pending connection queue is full, disconnect!!!\n");
+      log.PrintLog("Pending connection queue is full, disconnect!!!\n");
 
       AUR u = new AUR();
       u.s = s;
@@ -289,7 +270,7 @@ public class MahjongServer {
 
         Socket s = server.accept();
 
-        PrintLog(
+        log.PrintLog(
           "-->New connection from '" +
           s.getRemoteSocketAddress().toString() +
           "'!!!\n");
@@ -358,7 +339,7 @@ public class MahjongServer {
 
         Socket s = server.accept();
 
-        PrintLog(
+        log.PrintLog(
           "-->New ws connection from '" +
           s.getRemoteSocketAddress().toString() +
           "'!!!\n");
@@ -468,7 +449,7 @@ public class MahjongServer {
     //
 
     if (MahjongProtocol.INIT_TOKEN == u.token) {
-      PrintLog("<--AUR [" + u.id + "] Kicked!!!\n");
+      log.PrintLog("<--AUR [" + u.id + "] Kicked!!!\n");
       return;
     }
 
@@ -486,7 +467,7 @@ public class MahjongServer {
     //
 
     if (aur.length == nAur) {
-      PrintLog("AUR pool is full, disconnect!!!\n");
+      log.PrintLog("AUR pool is full, disconnect!!!\n");
 
       AUR u = new AUR();
       u.s = s;
@@ -535,7 +516,7 @@ public class MahjongServer {
     if (uread(u, str)) {
       u.token = str[0];
     } else {
-      PrintLog("AUR [" + u.id + "] Get token failed!!!\n");
+      log.PrintLog("AUR [" + u.id + "] Get token failed!!!\n");
       usend(u, MahjongProtocol.getInvalidCommandCmd());
       closeAur(u);
       return null;
@@ -545,7 +526,7 @@ public class MahjongServer {
     // Initialize successful, send client a server is ready notification.
     //
 
-    PrintLog("-->New AUR [" + u.id + "," + URLDecoder.decode(u.token, "UTF-8") + "] is READY!!!  #" + nAur + "u\n");
+    log.PrintLog("-->New AUR [" + u.id + "," + URLDecoder.decode(u.token, "UTF-8") + "] is READY!!!  #" + nAur + "u\n");
 
     usend(u, MahjongProtocol.getServerIsReadyCmd(u.id));
 
@@ -592,7 +573,7 @@ public class MahjongServer {
 
     if (System.currentTimeMillis() > u.keepAlive) {
       closeAur(u);
-      PrintLog("<--AUR [" + u.id + "] timeout Leave!!! #" + nAur + "u\n");
+      log.PrintLog("<--AUR [" + u.id + "] timeout Leave!!! #" + nAur + "u\n");
 
       return;
     }
@@ -611,7 +592,7 @@ public class MahjongServer {
 
     String str[] = new String[1];
     if (!uread(u, str)) {
-      PrintLog("<--AUR [" + u.id + "] read packet failed!\n");
+      log.PrintLog("<--AUR [" + u.id + "] read packet failed!\n");
       closeAur(u);
       return;
     }
@@ -681,7 +662,7 @@ public class MahjongServer {
     //
 
     else {
-      PrintLog("<--AUR [" + u.id + "] KICK, invalid command! (" + cmd + ")\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, invalid command! (" + cmd + ")\n");
       closeAur(u);
     }
   }
@@ -692,7 +673,7 @@ public class MahjongServer {
 
   boolean newGame(AUR u, String items[]) throws Exception {
 
-    PrintLog("AUR [" + u.id + "] attempt to create new game!\n");
+    log.PrintLog("AUR [" + u.id + "] attempt to create new game!\n");
 
     //
     // Is this client already in a game? It is not allowed to
@@ -700,7 +681,7 @@ public class MahjongServer {
     //
 
     if (-1 != u.iAgr) {
-      PrintLog("<--AUR [" + u.id + "] KICK, double create game!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, double create game!\n");
       closeAur(u);
       return false;
     }
@@ -714,7 +695,7 @@ public class MahjongServer {
     //
 
     if (agr.length == nAgr) {
-      PrintLog("<--AUR [" + u.id + "] create game failed, AGR full!\n");
+      log.PrintLog("<--AUR [" + u.id + "] create game failed, AGR full!\n");
       usend(u, MahjongProtocol.getServerIsBusyCmd());
       return true;
     }
@@ -744,7 +725,7 @@ public class MahjongServer {
 
     u.iAgr = g.id;
 
-    PrintLog("-->New game [" + g.id + "] is created by AUR [" + u.id + "]!!!  #" + nAgr + "g\n");
+    log.PrintLog("-->New game [" + g.id + "] is created by AUR [" + u.id + "]!!!  #" + nAgr + "g\n");
 
     //
     // Notify all clients a new game is created.
@@ -763,14 +744,14 @@ public class MahjongServer {
 
     int iAgr = Integer.parseInt(items[1]);
 
-    PrintLog("AUR [" + u.id + "] attempt to join game " + iAgr + "!\n");
+    log.PrintLog("AUR [" + u.id + "] attempt to join game " + iAgr + "!\n");
 
     //
     // Is valid to join game?
     //
 
     if (-1 != u.iAgr) {
-      PrintLog("<--AUR [" + u.id + "] KICK, join game but already in game!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, join game but already in game!\n");
       closeAur(u);
       return false;
     }
@@ -780,7 +761,7 @@ public class MahjongServer {
     //
 
     if (0 > iAgr || agr.length <= iAgr || null == agr[iAgr]) {
-      PrintLog("<--AUR [" + u.id + "] KICK, join invalid game!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, join invalid game!\n");
       closeAur(u);
       return false;
     }
@@ -792,7 +773,7 @@ public class MahjongServer {
     AGR g = agr[iAgr];
 
     if (g.running) {
-      PrintLog("AUR [" + u.id + "] attempts to join a playing game " + iAgr + " failed!\n");
+      log.PrintLog("AUR [" + u.id + "] attempts to join a playing game " + iAgr + " failed!\n");
       return false;
     }
 
@@ -828,7 +809,7 @@ public class MahjongServer {
 
     u.iAgr = iAgr;
 
-    PrintLog("AUR [" + u.id + "] join game [" + iAgr + "] at pos " + pos + "!\n");
+    log.PrintLog("AUR [" + u.id + "] join game [" + iAgr + "] at pos " + pos + "!\n");
 
     //
     // Notify all clients.
@@ -845,14 +826,14 @@ public class MahjongServer {
 
   boolean leaveGame(AUR u) throws Exception {
 
-    PrintLog("AUR [" + u.id + "] attempt to leave game!\n");
+    log.PrintLog("AUR [" + u.id + "] attempt to leave game!\n");
 
     //
     // Is valid to leave game?
     //
 
     if (-1 == u.iAgr) {
-      PrintLog("<--AUR [" + u.id + "] KICK, leave game but not in game!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, leave game but not in game!\n");
       closeAur(u);
       return false;
     }
@@ -874,7 +855,7 @@ public class MahjongServer {
       }
     }
 
-    PrintLog("AUR [" + u.id + "] leave game [" + g.id + "]!\n");
+    log.PrintLog("AUR [" + u.id + "] leave game [" + g.id + "]!\n");
 
     for (pos = 0; pos < g.iAur.length; pos++) {
       if (-1 != g.iAur[pos]) {
@@ -907,7 +888,7 @@ public class MahjongServer {
       agr[g.id] = null;
       nAgr -= 1;
 
-      PrintLog("<--Game [" + g.id + "] destroyed!!!  #" + nAgr + "g\n");
+      log.PrintLog("<--Game [" + g.id + "] destroyed!!!  #" + nAgr + "g\n");
     }
 
     return true;
@@ -924,7 +905,7 @@ public class MahjongServer {
     //
 
     if (-1 == u.iAgr) {
-      PrintLog("<--AUR [" + u.id + "] KICK, not in game!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, not in game!\n");
       closeAur(u);
       return false;
     }
@@ -936,7 +917,7 @@ public class MahjongServer {
     //
 
     if (g.iAur[0] != u.id) {
-      PrintLog("<--AUR [" + u.id + "] KICK, not game creater!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, not game creater!\n");
       closeAur(u);
       return false;
     }
@@ -946,7 +927,7 @@ public class MahjongServer {
     //
 
     if (g.running) {
-      PrintLog("<--AUR [" + u.id + "] KICK, game already start!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, game already start!\n");
       closeAur(u);
       return false;
     }
@@ -969,7 +950,7 @@ public class MahjongServer {
 
     usendAll(null, MahjongProtocol.getStartGameCmd(g.id));
 
-    PrintLog("Game [" + g.id + "] start!!!\n");
+    log.PrintLog("Game [" + g.id + "] start!!!\n");
 
     return true;
   }
@@ -1016,7 +997,7 @@ public class MahjongServer {
         resetTimer(g);
         return true;
       } else {
-        PrintLog("<--AUR [" + u.id + "] KICK, fail to pass!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to pass!\n");
       }
     }
 
@@ -1032,7 +1013,7 @@ public class MahjongServer {
         resetTimer(g);
         return true;
       } else {
-        PrintLog("<--AUR [" + u.id + "] KICK, fail to exchange!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to exchange!\n");
       }
     }
 
@@ -1047,7 +1028,7 @@ public class MahjongServer {
         resetTimer(g);
         return true;
       } else {
-        PrintLog("<--AUR [" + u.id + "] KICK, fail to chi!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to chi!\n");
       }
     }
 
@@ -1062,7 +1043,7 @@ public class MahjongServer {
         resetTimer(g);
         return true;
       } else {
-        PrintLog("<--AUR [" + u.id + "] KICK, fail to pon!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to pon!\n");
       }
     }
 
@@ -1077,7 +1058,7 @@ public class MahjongServer {
         resetTimer(g);
         return true;
       } else {
-        PrintLog("<--AUR [" + u.id + "] KICK, fail to gun!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to gun!\n");
       }
     }
 
@@ -1096,7 +1077,7 @@ public class MahjongServer {
         g.newPlay = true;
         return true;
       } else {
-        PrintLog("<--AUR [" + u.id + "] KICK, fail to lon!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to lon!\n");
       }
     }
 
@@ -1111,7 +1092,7 @@ public class MahjongServer {
         sendNextGameState(g);
         resetTimer(g);
       } else {
-        PrintLog("<--AUR [" + u.id + "] KICK, fail to tin!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to tin!\n");
       }
     }
 
@@ -1120,7 +1101,7 @@ public class MahjongServer {
     //
 
     else {
-      PrintLog("<--AUR [" + u.id + "] KICK, invalid command!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, invalid command!\n");
     }
 
     closeAur(u);
@@ -1873,17 +1854,6 @@ public class MahjongServer {
       }
     }
     return true;
-  }
-
-  //
-  // Output message on the screen and write to log file.
-  //
-
-  void PrintLog(String mess) throws IOException {
-    String head = (new Date()).toString() + ", ";
-    System.out.print(head + mess);
-    log.write(head + mess);
-    log.flush();
   }
 
   //
