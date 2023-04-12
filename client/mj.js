@@ -127,7 +127,11 @@ function WebSocketTest()
     return;
   }
 
-  var wsUri = "ws://" + document.getElementById('svraddr').value + ":18802/";
+  var scheme = document.location.protocol.replace('http', 'ws');
+  if (-1 == scheme.indexOf('ws')) {
+    scheme = 'ws:';
+  }
+  var wsUri = scheme + "//" + document.getElementById('svraddr').value + ":18802/";
 
   var ws = new WebSocket(wsUri, "mj");
   ws.binaryType = "arraybuffer";
