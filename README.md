@@ -5,6 +5,7 @@
 * websocket connection support
 * console test client
 * web browser html5 test client
+* auto play AI support
 
 Game play video link https://www.youtube.com/watch?v=a24jGXnMdFs
 
