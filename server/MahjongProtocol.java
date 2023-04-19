@@ -78,7 +78,7 @@ public class MahjongProtocol {
   // C_NEW_PLAYER
   //      New connection enters lobby successful. Server sends this notify to
   //      all clients.
-  // Format: Cmd, iAur
+  // Format: Cmd, iAur, token
   //
 
   public static final byte C_NEW_PLAYER = 0x10;
@@ -237,6 +237,24 @@ public class MahjongProtocol {
 
   public static String getEnableAutoPlayCmd(boolean enable) {
     return Integer.toString(C_ENABLE_AUTO_PLAY) + "," + (enable ? "1" : "0");
+  }
+
+  //
+  // C_SET_TOKEN
+  //      Changed player display name. (may duplicate)
+  // Format:
+  //      1, Client to server: Cmd, token
+  //      2, Server to client: Cmd, iAur, token
+  //
+
+  public static final byte C_SET_TOKEN = 0x36;
+
+  public static String getSetTokenCmd(String token) {
+    return Integer.toString(C_SET_TOKEN) + "," + token;
+  }
+
+  public static String getSetTokenCmd(int uid, String token) {
+    return Integer.toString(C_SET_TOKEN) + "," + uid + "," + token;
   }
 
   //

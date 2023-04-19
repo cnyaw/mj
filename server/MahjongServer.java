@@ -658,6 +658,14 @@ public class MahjongServer {
     }
 
     //
+    // Change player token.
+    //
+
+    else if (MahjongProtocol.C_SET_TOKEN == cmd) {
+      setPlayerName(u, items);
+    }
+
+    //
     // Invalid command.
     //
 
@@ -1680,6 +1688,17 @@ public class MahjongServer {
     }
 
     return true;
+  }
+
+  //
+  // Set player token.
+  //
+
+  void setPlayerName(AUR u, String items[]) throws Exception {
+    String token = items[1];
+    log.PrintLog("AUR [" + u.id + "] set token '" + token + "'!\n");
+    u.token = token;
+    usendAll(null, MahjongProtocol.getSetTokenCmd(u.id, token));
   }
 
   //

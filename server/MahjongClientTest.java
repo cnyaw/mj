@@ -75,52 +75,42 @@ public class MahjongClientTest {
           int Aur1 = Integer.parseInt(items[1]);
           System.out.println("PLAYER LEAVE " + Aur1);
         } else if (MahjongProtocol.C_NEW_GAME == cmd) {
-
           int GameId = Integer.parseInt(items[1]);
           int Aur1 = Integer.parseInt(items[2]);
           int Aur2 = Integer.parseInt(items[3]);
           int Aur3 = Integer.parseInt(items[4]);
           int Aur4 = Integer.parseInt(items[5]);
           int IsPlaying = Integer.parseInt(items[6]);
-
           System.out.println("NEW GAME [" + GameId + "], player=[" + Aur1 + "," + Aur2 + "," + Aur3 + "," + Aur4 + "]" + (1 == IsPlaying ? ",Playing" : ""));
-
           Games[GameId][0] = Aur1;
           Games[GameId][1] = Aur2;
           Games[GameId][2] = Aur3;
           Games[GameId][3] = Aur4;
           Games[GameId][4] = IsPlaying;
-
           if (Aur1 == MyId) {
             MyGameId = GameId;
           }
         } else if (MahjongProtocol.C_LEAVE_GAME == cmd) {
           int GameId = Integer.parseInt(items[1]);
           int Aur1 = Integer.parseInt(items[2]);
-
           if (Aur1 == MyId) {
             MyGameId = -1;
           }
-
           if (-1 == Aur1) {             // Destroy game.
             Games[GameId][0] = -1;
             Games[GameId][1] = -1;
             Games[GameId][2] = -1;
             Games[GameId][3] = -1;
             Games[GameId][4] = 0;
-
             if (GameId == MyGameId) {
               MyGameId = -1;
             }
-
             System.out.println("LEAVE GAME [" + GameId + "], game destroy");
           } else {
             for (int i = 0; i < 4; i++) {
               if (Games[GameId][i] == Aur1) {
-
                 Games[GameId][i] = -1;
                 System.out.println("LEAVE GAME [" + GameId + "], player=" + Aur1 + ",  [" + Games[GameId][0] + "," + Games[GameId][1] + "," + Games[GameId][2] + "," + Games[GameId][3] + "]");
-
                 break;
               }
             }
@@ -129,17 +119,13 @@ public class MahjongClientTest {
           int GameId = Integer.parseInt(items[1]);
           int Aur1 = Integer.parseInt(items[2]);
           int pos = Integer.parseInt(items[3]);
-
           Games[GameId][pos] = Aur1;
-
           System.out.println("JOIN GAME [" + GameId + "], player=" + Aur1 + ", [" + Games[GameId][0] + "," + Games[GameId][1] + "," + Games[GameId][2] + "," + Games[GameId][3] + "]");
-
           if (Aur1 == MyId) {
             MyGameId = GameId;
           }
         } else if (MahjongProtocol.C_START_GAME == cmd) {
           int GameId = Integer.parseInt(items[1]);
-
           if (MyGameId == GameId) {
             System.out.println("GAME START [" + GameId + "], My Game");
           } else {
@@ -294,6 +280,9 @@ public class MahjongClientTest {
             System.out.println(")");
             break;
           }
+        } else if (MahjongProtocol.C_SET_TOKEN == cmd) {
+          int Aur1 = Integer.parseInt(items[1]);
+          System.out.println("PLAYER " + Aur1 + " set token '" + URLDecoder.decode(items[2], "UTF-8") + "'");
         }
       }
 

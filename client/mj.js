@@ -99,18 +99,6 @@ function renderGame() {
   }
 }
 
-function str2ab(str) {
-  var arr = [];
-  for(var i = 0; i < str.length; i++) {
-    arr.push(str.charCodeAt(i));
-  }
-  return new Uint8Array(arr);
-}
-
-function send(ws, str) {
-  ws.send(str2ab(str));
-}
-
 function darkGameView(ctx2d) {
   ctx2d.globalAlpha = 0.65;
   ctx2d.fillStyle = 'black';
@@ -142,6 +130,10 @@ function WebSocketTest()
     writeToScreen("CONNECTED");
     send(ws, encodeURIComponent(document.getElementById('nickname').value));
     tHeartBeat = setInterval(function(){ send(ws, '11'); }, 8000);
+    var a = document.getElementById('sse');
+    a.innerHTML = 'Set Name ';
+    a.href = '#';
+    a.onclick = function() {changeName();}
   };
 
   ws.onclose = function (evt) {
@@ -408,6 +400,10 @@ function WebSocketTest()
           break;
         }
         break;
+      case 0x36:                        // Changed player name.
+        var scmd = s.split(',');
+        setPlayerName(scmd[1], decodeURIComponent(scmd[2]));
+        break;
       }
     } else {
       writeToScreen('<span style="color:blue;">RESPONSE:'+evt.data+'</span>');
@@ -425,6 +421,23 @@ function WebSocketTest()
     pre.innerHTML = message;
     output.appendChild(pre);
     window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function str2ab(str) {
+    var arr = [];
+    for(var i = 0; i < str.length; i++) {
+      arr.push(str.charCodeAt(i));
+    }
+    return new Uint8Array(arr);
+  }
+
+  function send(ws, str) {
+    ws.send(str2ab(str));
+  }
+
+  function changeName() {
+    var name = encodeURIComponent(document.getElementById('nickname').value);
+    send(ws, '54,' + name);
   }
 }
 
