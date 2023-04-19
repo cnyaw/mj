@@ -431,13 +431,18 @@ function WebSocketTest()
 function addPlayer(id, name) {
   var pl = document.getElementById('player-list');
   var p = document.createElement("p");
+  pl.appendChild(p);
+  p.setAttribute("id", 'player' + id);
+  setPlayerName(id, name);
+}
+
+function setPlayerName(id, name) {
+  var p = document.getElementById('player' + id);
   var s = id + ' (' + name + ')';
   if (id == myId) {
     s = s + ' *';
   }
   p.innerHTML = s;
-  pl.appendChild(p);
-  p.setAttribute("id", 'player' + id);
 }
 
 function removePlayer(id) {
