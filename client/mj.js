@@ -130,6 +130,8 @@ function WebSocketTest()
     writeToScreen("CONNECTED");
     send(ws, encodeURIComponent(document.getElementById('nickname').value));
     tHeartBeat = setInterval(function(){ send(ws, '11'); }, 8000);
+    var addr = document.getElementById('svraddr');
+    addr.parentNode.removeChild(addr);
     var a = document.getElementById('sse');
     a.innerHTML = 'Set Name ';
     a.href = '#';
