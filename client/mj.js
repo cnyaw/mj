@@ -137,11 +137,11 @@ function WebSocketTest() {
     writeToScreen('<span style="color:red;">ERROR:</span>' + err);
   }
 
-  mj.onnewplayer = function(id, name) {
+  mj.onaddplayer = function(id, name) {
     addPlayer(id, name);
   }
 
-  mj.onplayerleave = function(id) {
+  mj.onremoveplayer = function(id) {
     removePlayer(id);
   }
 

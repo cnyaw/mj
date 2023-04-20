@@ -21,8 +21,8 @@ function MahjongClient(addr, token) {
   this.onlogin = null;
   this.onclose = null;
   this.onerror = null;
-  this.onnewplayer = null;
-  this.onplayerleave = null;
+  this.onaddplayer = null;
+  this.onremoveplayer = null;
   this.onsetplayername = null;
   this.onplayerpass = null;
   this.onplayertin = null;
@@ -76,14 +76,14 @@ function MahjongClient(addr, token) {
         }
         break;
       case 0x10:                        // New player.
-        if (mj.onnewplayer) {
+        if (mj.onaddplayer) {
           var scmd = s.split(',');
-          mj.onnewplayer(scmd[1], decodeURIComponent(scmd[2]));
+          mj.onaddplayer(scmd[1], decodeURIComponent(scmd[2]));
         }
         break;
       case 0x11:                        // Player leave.
-        if (mj.onplayerleave) {
-          mj.onplayerleave(cmd[1]);
+        if (mj.onremoveplayer) {
+          mj.onremoveplayer(cmd[1]);
         }
         break;
       case 0x20:                        // New game.
