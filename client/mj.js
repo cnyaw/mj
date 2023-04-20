@@ -157,27 +157,6 @@ function WebSocketTest() {
     //writeToScreen('<span style="color:blue;">Player ' + pos + ' tin, drop ' + drop + '.</span>');
   }
 
-  mj.onplayerlon = function(pos, lon) {
-    darkGameView(ctx2d);
-    ctx2d.font = '32pt bold';
-    ctx2d.textAlign = 'center';
-    ctx2d.fillStyle = 'red';
-    var x = SW / 2, y = SH / 2;
-    ctx2d.fillText('玩家' + pos + '胡牌', x, y);
-    ctx2d.font = '26pt bold';
-    var WO_TYPE=
-      ["門前清","平胡","斷么九","門前一杯口","面前聽","槓上開花","搶槓","海底撈月","河底撈魚","混帶么",
-       "三色同順","一條龍","碰碰胡","三暗刻","三槓子","七對子","連風牌","八仙過海","混一色","純帶么",
-       "三色同碰","小三元","混老頭","清一色","大三元","小四喜","大四喜","字一色","清老頭","四暗刻",
-       "四槓子","全求人","五暗刻","天胡","地胡","人胡","風牌","台牌","立直","自摸",
-       "胡牌","花牌","風牌","莊家","連莊","門清一摸三","紅中","青發","白板"];
-    for (var i = 0; i < lon.length; i++) {
-      var n = lon[i];
-      y = y + 30;
-      ctx2d.fillText(WO_TYPE[n], x, y);
-    }
-  }
-
   mj.onaddgame = function(game, p1, p2, p3, p4, isPlaying) {
     addGame(game, p1, p2, p3, p4, isPlaying);
 
@@ -229,12 +208,34 @@ function WebSocketTest() {
     ctx2d = c.getContext("2d");
   }
 
-  mj.ongameroundend = function() {
+  mj.ongameroundend = function(pos, lon) {
     darkGameView(ctx2d);
-    ctx2d.font = '46pt bold';
-    ctx2d.textAlign = 'center';
-    ctx2d.fillStyle = 'red';
-    ctx2d.fillText('流局', SW / 2, SH / 2);
+    if (pos) {
+      // Player lon.
+      ctx2d.font = '32pt bold';
+      ctx2d.textAlign = 'center';
+      ctx2d.fillStyle = 'red';
+      var x = SW / 2, y = SH / 2;
+      ctx2d.fillText('玩家' + pos + '胡牌', x, y);
+      ctx2d.font = '26pt bold';
+      var WO_TYPE=
+        ["門前清","平胡","斷么九","門前一杯口","面前聽","槓上開花","搶槓","海底撈月","河底撈魚","混帶么",
+         "三色同順","一條龍","碰碰胡","三暗刻","三槓子","七對子","連風牌","八仙過海","混一色","純帶么",
+         "三色同碰","小三元","混老頭","清一色","大三元","小四喜","大四喜","字一色","清老頭","四暗刻",
+         "四槓子","全求人","五暗刻","天胡","地胡","人胡","風牌","台牌","立直","自摸",
+         "胡牌","花牌","風牌","莊家","連莊","門清一摸三","紅中","青發","白板"];
+      for (var i = 0; i < lon.length; i++) {
+        var n = lon[i];
+        y = y + 30;
+        ctx2d.fillText(WO_TYPE[n], x, y);
+      }
+    } else {
+      // Game round is over.
+      ctx2d.font = '46pt bold';
+      ctx2d.textAlign = 'center';
+      ctx2d.fillStyle = 'red';
+      ctx2d.fillText('流局', SW / 2, SH / 2);
+    }
   }
 
   mj.ongameend = function() {

@@ -26,7 +26,6 @@ function MahjongClient(addr, token) {
   this.onsetplayername = null;
   this.onplayerpass = null;
   this.onplayertin = null;
-  this.onplayerlon = null;
   this.onaddgame = null;
   this.onremovegame = null;
   this.onjoingame = null;
@@ -195,12 +194,12 @@ function MahjongClient(addr, token) {
           mj.posPick = pos;
           mj.pick = cmd[3];
           renderGame();
-          if (mj.onplayerlon) {
+          if (mj.ongameroundend) {
             var lon = [];
             for (var i = 4; i < cmd.length; i++) {
               lon.push(cmd[i]);
             }
-            mj.onplayerlon(pos, lon);
+            mj.ongameroundend(pos, lon);
           }
           break;
         case 7:                         // Pick.
@@ -242,7 +241,7 @@ function MahjongClient(addr, token) {
           break;
         case 9:                         // Round end.
           if (mj.ongameroundend) {
-            mj.ongameroundend();
+            mj.ongameroundend(null, null);
           }
           break;
         case 10:                        // Show cards.
