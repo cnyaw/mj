@@ -122,10 +122,8 @@ function WebSocketTest() {
     writeToScreen('<span style="color:blue;">Server is ready, my ID = ' + id + '</span>');
     var addr = document.getElementById('svraddr');
     addr.parentNode.removeChild(addr);
-    var a = document.getElementById('sse');
-    a.innerHTML = 'Set Name ';
-    a.href = '#';
-    a.onclick = function() {mj.changeName(getName());}
+    var sse = document.getElementById('sse');
+    sse.innerHTML = '<a href="#" onclick="mj.changeName(getName());">Set Name </a><input type="text" id="nickname" value="nickname">';
   }
 
   mj.ondisconnect = function() {
