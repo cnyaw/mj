@@ -8,6 +8,7 @@
 var SW = 570, SH = 320;
 var CW = 24, CH = 34;
 var ctx2d;
+var inGame = false;
 var mj = null;
 
 function MJCOLOR(card) {
@@ -111,7 +112,6 @@ function WebSocketTest() {
   output = document.getElementById("output");
   imgCard = document.getElementById("imgCard");
 
-  var inGame = false;
   mj = new MahjongClient(addr, getName());
 
   mj.onconnect = function() {
@@ -123,7 +123,8 @@ function WebSocketTest() {
     var addr = document.getElementById('svraddr');
     addr.parentNode.removeChild(addr);
     var sse = document.getElementById('sse');
-    sse.innerHTML = '<a href="#" onclick="mj.changeName(getName());">Set Name </a><input type="text" id="nickname" value="nickname">';
+    sse.innerHTML = '<a class="btn" href="#" onclick="mj.changeName(getName());">Set Name </a><input type="text" id="nickname" value="nickname">';
+    sse.innerHTML += getToolbarHtml();
   }
 
   mj.ondisconnect = function() {
@@ -164,25 +165,33 @@ function WebSocketTest() {
 
     if (!inGame && !isPlaying) {
       mj.joinGame(game);
-      inGame = true
-      writeToScreen('<span style="color:blue;">Join game: ' + game + '</span>');
     }
   }
 
   mj.onremovegame = function(game) {
     removeGame(game);
+    if (game == mj.myGameId) {
+      inGame = false;
+    }
   }
 
   mj.onjoingame = function(id, game, pos) {
     joinGame(id, game, pos);
+    if (id == mj.myId) {
+      inGame = true;
+    }
   }
 
   mj.onleavegame = function(id, game) {
     leaveGame(id, game);
+    if (id == mj.myId || game == mj.myGameId) {
+      inGame = false;
+    }
   }
 
   mj.ongamestart = function(game) {
-    writeToScreen('<span style="color:red;">Game ' + game + ' is playing.</span>');
+    var g = document.getElementById('game' + game);
+    g.classList.add('highlight');
   }
 
   mj.ongameroundstart = function(round, wind, windCount, total, master, masterCount) {
@@ -266,6 +275,7 @@ function setPlayerName(id, name) {
   var s = id + ' (' + name + ')';
   if (id == mj.myId) {
     s = s + ' *';
+    p.classList.add('highlight');
   }
   p.innerHTML = s;
 }
@@ -287,6 +297,9 @@ function addGame(id, p1, p2, p3, p4, isPlaying) {
   g.innerHTML = s;
   gl.appendChild(g);
   g.setAttribute("id", 'game' + id);
+  if (isPlaying) {
+    g.classList.add('highlight');
+  }
 }
 
 function getPlayerListOfGame(s) {
@@ -327,4 +340,37 @@ function leaveGame(idPlayer, idGame) {
 function removeGame(id) {
   var g = document.getElementById('game' + id);
   document.getElementById('game-list').removeChild(g);
+} 
+
+function getToolbarHtml() {
+  var s = '<span>';
+  s += '<a class="btn" href="#" onclick="tbNewGame()">New Game</a>';
+  s += ' <a class="btn" href="#" onclick="tbJoinGame()">Join Game</a>';
+  s += ' <a class="btn" href="#" onclick="tbLeaveGame()">Leave Game</a>';
+  s += '</span>';
+  return s;
+}
+
+function tbNewGame() {
+  if (inGame) {
+    mj.onerror('newgame: You are already in game.');
+  } else {
+    alert('todo:newgame');
+  }
+}
+
+function tbJoinGame() {
+  if (inGame) {
+    mj.onerror('joingame: You are already in game.');
+  } else {
+    alert('todo:joingame');
+  }
+}
+
+function tbLeaveGame() {
+  if (!inGame) {
+    mj.onerror('leavegame: You are not in game.');
+  } else {
+    mj.leaveGame();
+  }
 }

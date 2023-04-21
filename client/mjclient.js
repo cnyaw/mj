@@ -100,6 +100,9 @@ function MahjongClient(addr, token) {
             mj.onleavegame(cmd[2], cmd[1]);
           }
         }
+        if (cmd[2] == mj.myId || cmd[1] == mj.myGameId) {
+          mj.myGameId = mj.myPos = -1;
+        }
         break;
       case 0x23:                        // Join game.
         if (mj.myId == cmd[2]) {
@@ -217,6 +220,7 @@ function MahjongClient(addr, token) {
             for (var i = idx; i < cmd.length; i++) {
               s2 = s2 + cmd[i] + ',';
             }
+            idx += count;
           }
           if (0 != (state & (1 << 4))) { // Can gun.
             var count = cmd[idx];
@@ -224,6 +228,7 @@ function MahjongClient(addr, token) {
             for (var i = idx; i < cmd.length; i++) {
               s2 = s2 + cmd[i] + ',';
             }
+            idx += count;
           }
           if (0 != (state & (1 << 5))) { // Can pon.
             var count = cmd[idx];
@@ -235,6 +240,7 @@ function MahjongClient(addr, token) {
             for (var i = idx; i < cmd.length; i++) {
               s2 = s2 + cmd[i] + ',';
             }
+            idx += count;
           }
           if (0 != (state & (1 << 3))) { // Can lon.
           }
@@ -322,11 +328,27 @@ function MahjongClient(addr, token) {
     }
   }
 
+  // Mahjong game protocols.
+
   this.changeName = function(name) {
     send(ws, '54,' + name);
   }
 
+  this.newGame = function() {
+    if (-1 == mj.myGameId) {
+      send(ws, '32');
+    }
+  }
+
+  this.leaveGame = function() {
+    if (-1 != mj.myGameId) {
+      send(ws, '34');
+    }
+  }
+
   this.joinGame = function(game) {
-    send(ws, '35,' + game);
+    if (-1 == mj.myGameId) {
+      send(ws, '35,' + game);
+    }
   }
 }

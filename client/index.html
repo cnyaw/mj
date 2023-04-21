@@ -8,14 +8,23 @@
 <!-- 2014/4/28 Waync Cheng -->
 <style type="text/css">
 canvas {
-  border: black 3px solid;
+  border:black 3px solid;
 }
 #list {
   padding:20px;
   position:fixed;
   top:0;
   right:0;
-  border: 2px solid gray;
+  border:2px solid gray;
+}
+.btn {
+  padding:1px;
+  margin:1px;
+  border: 1px solid gray;
+  text-decoration:none;
+}
+.highlight {
+  color:blue;
 }
 </style>
 </head>
@@ -25,7 +34,7 @@ canvas {
 <body>
 <img id="imgCard" src="mjcard.png" alt="" style="display:none;"/>
 <div id="sse">
-   <a href="javascript:WebSocketTest()">Start Demo </a><input type="text" id="nickname" value="nickname"><input type="text" id="svraddr" value="localhost">
+   <a class="btn" href="javascript:WebSocketTest()">Start Demo </a><input type="text" id="nickname" value="nickname"><input type="text" id="svraddr" value="localhost">
 </div>
 <div id="output"></div>
 <div id="list">
