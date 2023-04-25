@@ -119,9 +119,7 @@ function WebSocketTest() {
   mj.onlogin = function(id) {
     var addr = document.getElementById('svraddr');
     addr.parentNode.removeChild(addr);
-    var sse = document.getElementById('sse');
-    sse.innerHTML = '<a class="btn" href="#" onclick="mj.changeName(getName());">Set Name </a><input type="text" id="nickname" value="nickname">';
-    sse.innerHTML += getToolbarHtml();
+    setLoginToolbar();
   }
 
   mj.ondisconnect = function() {
@@ -155,18 +153,30 @@ function WebSocketTest() {
 
   mj.onaddgame = function(game, p1, p2, p3, p4, isPlaying) {
     addGame(game, p1, p2, p3, p4, isPlaying);
+    if (-1 != mj.myGameId) {
+      removeNewGameJoinGameBtns();
+    }
   }
 
   mj.onremovegame = function(game) {
     removeGame(game);
+    if (game == mj.myGameId) {
+      setLoginToolbar();
+    }
   }
 
   mj.onjoingame = function(id, game, pos) {
     joinGame(id, game, pos);
+    if (id == mj.myId) {
+      removeNewGameJoinGameBtns();
+    }
   }
 
   mj.onleavegame = function(id, game) {
     leaveGame(id, game);
+    if (id == mj.myId) {
+      setLoginToolbar();
+    }
   }
 
   mj.ongamestart = function(game) {
@@ -325,10 +335,27 @@ function removeGame(id) {
 function getToolbarHtml() {
   var s = '<span>';
   s += '<a id="tbNewGame" class="btn" href="#" onclick="tbNewGame()">New Game</a>';
-  s += ' <a class="btn" href="#" onclick="tbJoinGame()">Join Game</a>';
+  s += ' <a id="tbJoinGame" class="btn" href="#" onclick="tbJoinGame()">Join Game</a>';
   s += ' <a class="btn" href="#" onclick="tbLeaveGame()">Leave Game</a>';
   s += '</span>';
   return s;
+}
+
+function setLoginToolbar() {
+  var sse = document.getElementById('sse');
+  sse.innerHTML = '<a class="btn" href="#" onclick="mj.changeName(getName());">Set Name </a><input type="text" id="nickname" value="nickname">';
+  sse.innerHTML += getToolbarHtml();
+}
+
+function removeNewGameJoinGameBtns() {
+  var b1 = document.getElementById('tbNewGame');
+  if (b1) {
+    b1.parentElement.removeChild(b1);
+  }
+  var b2 = document.getElementById('tbJoinGame');
+  if (b2) {
+    b2.parentElement.removeChild(b2);
+  }
 }
 
 function tbNewGame() {
@@ -366,8 +393,5 @@ function tbLeaveGame() {
     mj.onerror('leavegame: You are not in game.');
   } else {
     mj.leaveGame();
-    var a = document.getElementById('tbNewGame');
-    a.onclick = function() { tbNewGame(); }
-    a.innerHTML = 'New Game';
   }
 }
