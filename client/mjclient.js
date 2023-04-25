@@ -358,4 +358,10 @@ function MahjongClient(addr, token) {
       send(ws, '35,' + game);
     }
   }
+
+  this.startGame = function() {
+    if (-1 != mj.myGameId) {
+      send(ws, '37');
+    }
+  }
 }

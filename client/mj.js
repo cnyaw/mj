@@ -343,7 +343,11 @@ function tbNewGame() {
 }
 
 function tbStartGame() {
-  alert('todo:startgame');
+  if (-1 == mj.myGameId) {
+    mj.onerror('joingame: You are not in game.');
+  } else {
+    mj.startGame();
+  }
 }
 
 function tbJoinGame() {
