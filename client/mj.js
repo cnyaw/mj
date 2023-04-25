@@ -154,7 +154,11 @@ function WebSocketTest() {
   mj.onaddgame = function(game, p1, p2, p3, p4, isPlaying) {
     addGame(game, p1, p2, p3, p4, isPlaying);
     if (-1 != mj.myGameId) {
-      removeNewGameJoinGameBtns();
+      removeButton('tbNewGame');
+      removeButton('tbJoinGame');
+    }
+    if (p1 == mj.myId) {
+      addStartGameButton();
     }
   }
 
@@ -168,7 +172,8 @@ function WebSocketTest() {
   mj.onjoingame = function(id, game, pos) {
     joinGame(id, game, pos);
     if (id == mj.myId) {
-      removeNewGameJoinGameBtns();
+      removeButton('tbNewGame');
+      removeButton('tbJoinGame');
     }
   }
 
@@ -182,6 +187,7 @@ function WebSocketTest() {
   mj.ongamestart = function(game) {
     var g = document.getElementById('game' + game);
     g.classList.add('highlight');
+    removeButton('tbStartGame');
   }
 
   mj.ongameroundstart = function(round, wind, windCount, total, master, masterCount) {
@@ -284,6 +290,9 @@ function addGame(id, p1, p2, p3, p4, isPlaying) {
   var gl = document.getElementById('game-list');
   var g = document.createElement("p");
   var s = id + ' [' + p1 + ',' + p2 + ',' + p3 + ',' + p4 + ']';
+  if (id == mj.myGameId) {
+    s = s + ' *';
+  }
   g.innerHTML = s;
   gl.appendChild(g);
   g.setAttribute("id", 'game' + id);
@@ -347,15 +356,16 @@ function setLoginToolbar() {
   sse.innerHTML += getToolbarHtml();
 }
 
-function removeNewGameJoinGameBtns() {
-  var b1 = document.getElementById('tbNewGame');
-  if (b1) {
-    b1.parentElement.removeChild(b1);
+function removeButton(id) {
+  var b = document.getElementById(id);
+  if (b) {
+    b.parentElement.removeChild(b);
   }
-  var b2 = document.getElementById('tbJoinGame');
-  if (b2) {
-    b2.parentElement.removeChild(b2);
-  }
+}
+
+function addStartGameButton() {
+  var sse = document.getElementById('sse');
+  sse.innerHTML += ' <a id="tbStartGame" class="btn" href="#" onclick="tbStartGame()">Start Game</a>';
 }
 
 function tbNewGame() {
@@ -363,9 +373,6 @@ function tbNewGame() {
     mj.onerror('newgame: You are already in game.');
   } else {
     mj.newGame();
-    var a = document.getElementById('tbNewGame');
-    a.onclick = function() { tbStartGame(); }
-    a.innerHTML = 'Start Game';
   }
 }
 
