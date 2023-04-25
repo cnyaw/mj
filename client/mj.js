@@ -8,7 +8,6 @@
 var SW = 570, SH = 320;
 var CW = 24, CH = 34;
 var ctx2d;
-var inGame = false;
 var mj = null;
 
 function MJCOLOR(card) {
@@ -115,11 +114,9 @@ function WebSocketTest() {
   mj = new MahjongClient(addr, getName());
 
   mj.onconnect = function() {
-    writeToScreen("CONNECTED");
   }
 
   mj.onlogin = function(id) {
-    writeToScreen('<span style="color:blue;">Server is ready, my ID = ' + id + '</span>');
     var addr = document.getElementById('svraddr');
     addr.parentNode.removeChild(addr);
     var sse = document.getElementById('sse');
@@ -128,7 +125,7 @@ function WebSocketTest() {
   }
 
   mj.ondisconnect = function() {
-    writeToScreen("DISCONNECTED");
+    mj.onerror("DISCONNECTED");
     mj = null;
   }
 
@@ -163,30 +160,21 @@ function WebSocketTest() {
     // For demo, try to join this game if player is not in game mode.
     //
 
-    if (!inGame && !isPlaying) {
+    if (-1 == mj.myGameId && !isPlaying) {
       mj.joinGame(game);
     }
   }
 
   mj.onremovegame = function(game) {
     removeGame(game);
-    if (game == mj.myGameId) {
-      inGame = false;
-    }
   }
 
   mj.onjoingame = function(id, game, pos) {
     joinGame(id, game, pos);
-    if (id == mj.myId) {
-      inGame = true;
-    }
   }
 
   mj.onleavegame = function(id, game) {
     leaveGame(id, game);
-    if (id == mj.myId || game == mj.myGameId) {
-      inGame = false;
-    }
   }
 
   mj.ongamestart = function(game) {
@@ -352,7 +340,7 @@ function getToolbarHtml() {
 }
 
 function tbNewGame() {
-  if (inGame) {
+  if (-1 != mj.myGameId) {
     mj.onerror('newgame: You are already in game.');
   } else {
     alert('todo:newgame');
@@ -360,7 +348,7 @@ function tbNewGame() {
 }
 
 function tbJoinGame() {
-  if (inGame) {
+  if (-1 != mj.myGameId) {
     mj.onerror('joingame: You are already in game.');
   } else {
     alert('todo:joingame');
@@ -368,7 +356,7 @@ function tbJoinGame() {
 }
 
 function tbLeaveGame() {
-  if (!inGame) {
+  if (-1 == mj.myGameId) {
     mj.onerror('leavegame: You are not in game.');
   } else {
     mj.leaveGame();
