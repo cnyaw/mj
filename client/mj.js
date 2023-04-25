@@ -324,7 +324,7 @@ function removeGame(id) {
 
 function getToolbarHtml() {
   var s = '<span>';
-  s += '<a class="btn" href="#" onclick="tbNewGame()">New Game</a>';
+  s += '<a id="tbNewGame" class="btn" href="#" onclick="tbNewGame()">New Game</a>';
   s += ' <a class="btn" href="#" onclick="tbJoinGame()">Join Game</a>';
   s += ' <a class="btn" href="#" onclick="tbLeaveGame()">Leave Game</a>';
   s += '</span>';
@@ -336,7 +336,14 @@ function tbNewGame() {
     mj.onerror('newgame: You are already in game.');
   } else {
     mj.newGame();
+    var a = document.getElementById('tbNewGame');
+    a.onclick = function() { tbStartGame(); }
+    a.innerHTML = 'Start Game';
   }
+}
+
+function tbStartGame() {
+  alert('todo:startgame');
 }
 
 function tbJoinGame() {
@@ -352,5 +359,8 @@ function tbLeaveGame() {
     mj.onerror('leavegame: You are not in game.');
   } else {
     mj.leaveGame();
+    var a = document.getElementById('tbNewGame');
+    a.onclick = function() { tbNewGame(); }
+    a.innerHTML = 'New Game';
   }
 }

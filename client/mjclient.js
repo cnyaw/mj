@@ -86,6 +86,13 @@ function MahjongClient(addr, token) {
         }
         break;
       case 0x20:                        // New game.
+        for (var i = 2; i <= 5; i++) {
+          if (cmd[i] == mj.myId) {
+            mj.myGameId = cmd[1];
+            mj.myPos = i - 2;
+            break;
+          }
+        }
         if (mj.onaddgame) {
           mj.onaddgame(cmd[1], cmd[2], cmd[3], cmd[4], cmd[5], 0 != cmd[6]);
         }
