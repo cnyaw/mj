@@ -155,14 +155,6 @@ function WebSocketTest() {
 
   mj.onaddgame = function(game, p1, p2, p3, p4, isPlaying) {
     addGame(game, p1, p2, p3, p4, isPlaying);
-
-    //
-    // For demo, try to join this game if player is not in game mode.
-    //
-
-    if (-1 == mj.myGameId && !isPlaying) {
-      mj.joinGame(game);
-    }
   }
 
   mj.onremovegame = function(game) {
@@ -343,7 +335,7 @@ function tbNewGame() {
   if (-1 != mj.myGameId) {
     mj.onerror('newgame: You are already in game.');
   } else {
-    alert('todo:newgame');
+    mj.newGame();
   }
 }
 
