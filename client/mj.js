@@ -354,7 +354,10 @@ function tbJoinGame() {
   if (-1 != mj.myGameId) {
     mj.onerror('joingame: You are already in game.');
   } else {
-    alert('todo:joingame');
+    var game = prompt('Enter game id:');
+    if (game) {
+      mj.joinGame(game);
+    }
   }
 }
 
