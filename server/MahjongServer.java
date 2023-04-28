@@ -1128,7 +1128,7 @@ public class MahjongServer {
     //
 
     if (MahjongGame.AI_PASS == action) {
-      send(g, MahjongProtocol.getGameActionCmd(active, MahjongGame.AI_PASS));
+      send(g, MahjongProtocol.getGameActionCmd(active, action));
       return true;
     }
 
@@ -1137,7 +1137,7 @@ public class MahjongServer {
     //
 
     if (MahjongGame.AI_EXCHANGE == action) {
-      String sCmd = MahjongProtocol.getGameActionCmd(active, MahjongGame.AI_EXCHANGE);
+      String sCmd = MahjongProtocol.getGameActionCmd(active, action);
       sCmd += "," + card;
       send(g, sCmd);
       return true;
@@ -1148,7 +1148,7 @@ public class MahjongServer {
     //
 
     if (MahjongGame.AI_CHI == action) {
-      String sCmd = MahjongProtocol.getGameActionCmd(active, MahjongGame.AI_CHI);
+      String sCmd = MahjongProtocol.getGameActionCmd(active, action);
       sCmd += "," + card;
       send(g, sCmd);
       return true;
@@ -1159,7 +1159,7 @@ public class MahjongServer {
     //
 
     if (MahjongGame.AI_PON == action) {
-      String sCmd = MahjongProtocol.getGameActionCmd(active, MahjongGame.AI_PON);
+      String sCmd = MahjongProtocol.getGameActionCmd(active, action);
       sCmd += "," + card;
       send(g, sCmd);
       return true;
@@ -1170,7 +1170,7 @@ public class MahjongServer {
     //
 
     if (MahjongGame.AI_GUN == action) {
-      String sCmd = MahjongProtocol.getGameActionCmd(active, MahjongGame.AI_GUN);
+      String sCmd = MahjongProtocol.getGameActionCmd(active, action);
       sCmd += "," + card + "," + g.mj.getPick(); // Additional pick card after gun.
       send(g, sCmd);
       return true;
@@ -1192,7 +1192,7 @@ public class MahjongServer {
       // 2nd, notify active player wins this game, and send his score list.
       //
 
-      String sCmd = MahjongProtocol.getGameActionCmd(active, MahjongGame.AI_LON);
+      String sCmd = MahjongProtocol.getGameActionCmd(active, action);
       sCmd += "," + card;
 
       MahjongScore s = new MahjongScore();
@@ -1212,7 +1212,7 @@ public class MahjongServer {
     //
 
     if (MahjongGame.AI_TIN == action) {
-      String sCmd = MahjongProtocol.getGameActionCmd(active, MahjongGame.AI_TIN);
+      String sCmd = MahjongProtocol.getGameActionCmd(active, action);
       sCmd += "," + card;
       send(g, sCmd);
       return true;
