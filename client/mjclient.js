@@ -165,6 +165,16 @@ function MahjongClient(addr, token) {
           break;
         case 2:                         // Exchange.
           mj.cDrop.push(cmd[3]);
+          if (pos == mj.myPos && mj.pick != cmd[3]) {
+            var p = mj.pCard[pos];
+            for (var i = 0; i < p.length; i++) {
+              if (cmd[3] == p[i]) {
+                p[i] = mj.pick;
+                p.sort(sortNumber); // Make sure sort by numbers.
+                break;
+              }
+            }
+          }
           renderGame();
           break;
         case 3:                         // Chi.
@@ -362,6 +372,18 @@ function MahjongClient(addr, token) {
   this.startGame = function() {
     if (-1 != mj.myGameId) {
       send(ws, '37');
+    }
+  }
+
+  this.pass = function() {
+    if (-1 != mj.myGameId && mj.myPos == mj.posPick) {
+      send(ws, '52,1');
+    }
+  }
+
+  this.exchange = function(card) {
+    if (-1 != mj.myGameId && mj.myPos == mj.posPick) {
+      send(ws, '52,2,' + card);
     }
   }
 }

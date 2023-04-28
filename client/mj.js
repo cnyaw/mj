@@ -8,6 +8,8 @@
 var SW = 570, SH = 320;
 var CW = 24, CH = 34;
 var ctx2d;
+var KEY_STRING = '1234567890-=jkl;,';
+var KEY_CHAR = KEY_STRING.split('');
 var mj = null;
 
 function MJCOLOR(card) {
@@ -25,6 +27,14 @@ function drawCard(card, x, y) {
     col = 3, num = 7;
   }
   ctx2d.drawImage(imgCard, num * CW, col * CH, CW, CH, x, y, CW, CH);
+}
+
+function drawHotkey(x, y, ch) {
+  ctx2d.font = '8pt bold';
+  ctx2d.textAlign = 'center';
+  ctx2d.fillStyle = 'red';
+  ctx2d.fillText(ch, x + CW/2, y - 4);
+  ctx2d.textAlign = '';
 }
 
 function renderGame() {
@@ -62,6 +72,9 @@ function renderGame() {
     }
     for (var j = 0; j < mj.pCard[i].length; j++, x = x + CW) {
       drawCard(mj.pCard[i][j], x, py[i]);
+      if (mj.myPos == mj.posPick && mj.myPos == i) { // Show hotkey if this is my turn.
+        drawHotkey(x, py[i], KEY_CHAR[j]);
+      }
     }
   }
 
@@ -400,5 +413,20 @@ function tbLeaveGame() {
     mj.onerror('leavegame: You are not in game.');
   } else {
     mj.leaveGame();
+  }
+}
+
+window.onkeypress = function(e) {
+  e = e || window.event;
+  if (-1 == mj.myGameId || mj.myPos != mj.posPick) {
+    return;
+  }
+  if (' ' == e.key) {
+    mj.exchange(mj.pick);
+    return;
+  }
+  var i = KEY_CHAR.indexOf(e.key);
+  if (-1 != i && i < mj.pCard[mj.myPos].length) {
+    mj.exchange(mj.pCard[mj.myPos][i]);
   }
 }
