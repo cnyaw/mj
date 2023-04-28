@@ -15,6 +15,7 @@ function MahjongClient(addr, token) {
   this.cDrop = null;                    // Drop cards.
   this.pick = -1;
   this.posPick = -1;                    // Current pick card, current pick player pos.
+  this.state = null;
   // Event callback.
   this.onconnect = null;
   this.ondisconnect = null;
@@ -90,6 +91,7 @@ function MahjongClient(addr, token) {
           if (cmd[i] == mj.myId) {
             mj.myGameId = cmd[1];
             mj.myPos = i - 2;
+            mj.state = null;
             break;
           }
         }
@@ -109,12 +111,14 @@ function MahjongClient(addr, token) {
         }
         if (cmd[2] == mj.myId || cmd[1] == mj.myGameId) {
           mj.myGameId = mj.myPos = -1;
+          mj.state = null;
         }
         break;
       case 0x23:                        // Join game.
         if (mj.myId == cmd[2]) {
           mj.myGameId = cmd[1];
           mj.myPos = cmd[3];
+          mj.state = null;
         }
         if (mj.onjoingame) {
           mj.onjoingame(cmd[2], cmd[1], cmd[3]);
@@ -155,6 +159,7 @@ function MahjongClient(addr, token) {
         }
         break;
       case 0x34:                        // Game action.
+        mj.state = null;
         var pos = cmd[1];
         switch (cmd[2] & 0xff)
         {
@@ -229,6 +234,7 @@ function MahjongClient(addr, token) {
           break;
         case 8:                         // State.
           var state = cmd[3] & 0xff;
+          mj.state = state;
           var idx = 4;
           var s2 = '';
           if (0 != (state & (1 << 2))) { // Can tin.
@@ -261,6 +267,7 @@ function MahjongClient(addr, token) {
           }
           if (0 != (state & (1 << 3))) { // Can lon.
           }
+          renderGame();
           break;
         case 9:                         // Round end.
           if (mj.ongameroundend) {
@@ -376,7 +383,7 @@ function MahjongClient(addr, token) {
   }
 
   this.pass = function() {
-    if (-1 != mj.myGameId && mj.myPos == mj.posPick) {
+    if (mj.state) {
       send(ws, '52,1');
     }
   }

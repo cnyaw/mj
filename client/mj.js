@@ -76,6 +76,25 @@ function renderGame() {
         drawHotkey(x, py[i], KEY_CHAR[j]);
       }
     }
+    if (i == mj.myPos && mj.state) { // Draw my game state.
+      var s = '';
+      if (0 != (mj.state & (1 << 2))) { // Can tin.
+        s += '可聽';
+      }
+      if (0 != (mj.state & (1 << 4))) { // Can gun.
+        s += '可槓';
+      }
+      if (0 != (mj.state & (1 << 5))) { // Can pon.
+        s += '可碰';
+      }
+      if (0 != (mj.state & (1 << 6))) { // Can chi.
+        s += '可吃';
+      }
+      if (0 != (mj.state & (1 << 3))) { // Can lon.
+        s += '可胡';
+      }
+      ctx2d.fillText(s, x + CW, py[i]);
+    }
   }
 
   //
@@ -418,6 +437,12 @@ function tbLeaveGame() {
 
 window.onkeypress = function(e) {
   e = e || window.event;
+  if (mj.state) {
+    if (' ' == e.key) {
+      mj.pass();
+    }
+    return;
+  }
   if (-1 == mj.myGameId || mj.myPos != mj.posPick) {
     return;
   }
