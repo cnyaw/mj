@@ -8,7 +8,7 @@
 var SW = 570, SH = 320;
 var CW = 24, CH = 34;
 var ctx2d;
-var KEY_STRING = '1234567890-=jkl;,';
+var KEY_STRING = "1234567890-=jkl;'";
 var KEY_CHAR = KEY_STRING.split('');
 var mj = null;
 
@@ -34,7 +34,42 @@ function drawHotkey(x, y, ch) {
   ctx2d.textAlign = 'center';
   ctx2d.fillStyle = 'red';
   ctx2d.fillText(ch, x + CW/2, y - 4);
-  ctx2d.textAlign = '';
+}
+
+function drawStateCards(x, y, s, cards, key) {
+  ctx2d.fillText(s, x, y - CH/2);
+  for (var i = 0; i < cards.length; i++, x = x + CW) {
+    drawCard(cards[i], x, y);
+    drawHotkey(x, y, KEY_CHAR[key]);
+    key += 1;
+  }
+  return [x, key];
+}
+
+function drawMyGameState(x, y) {
+  var key = 0;
+  if (0 != (mj.state & (1 << 2))) { // Can tin.
+    var xk = drawStateCards(x, y, '聽', mj.tin, key);
+    x = xk[0];
+    key = xk[1];
+  }
+  if (0 != (mj.state & (1 << 4))) { // Can gun.
+    var xk = drawStateCards(x, y, '槓', mj.gun, key);
+    x = xk[0];
+    key = xk[1];
+  }
+  if (0 != (mj.state & (1 << 5))) { // Can pon.
+    var xk = drawStateCards(x, y, '碰', mj.pon, key);
+    x = xk[0];
+    key = xk[1];
+  }
+  if (0 != (mj.state & (1 << 6))) { // Can chi.
+    var xk = drawStateCards(x, y, '吃', mj.chi, key);
+    x = xk[0];
+    key = xk[1];
+  }
+  if (0 != (mj.state & (1 << 3))) { // Can lon.
+  }
 }
 
 function renderGame() {
@@ -62,38 +97,27 @@ function renderGame() {
     var x = 2;
     ctx2d.fillStyle = 'black';
     ctx2d.font = '20px Arial';
+    ctx2d.textAlign = 'start';
     ctx2d.fillText(i, x, py[i] + 24);
     x = 16;
     if (0 != mj.oCard[i].length) {
       for (var j = 0; j < mj.oCard[i].length; j++, x = x + CW) {
         drawCard(mj.oCard[i][j], x, py[i]);
       }
-      x = x + 2;
+      x += 2;
     }
-    for (var j = 0; j < mj.pCard[i].length; j++, x = x + CW) {
-      drawCard(mj.pCard[i][j], x, py[i]);
-      if (mj.myPos == mj.posPick && mj.myPos == i) { // Show hotkey if this is my turn.
-        drawHotkey(x, py[i], KEY_CHAR[j]);
+    if (0 != mj.pCard[i].length) {
+      for (var j = 0; j < mj.pCard[i].length; j++, x = x + CW) {
+        drawCard(mj.pCard[i][j], x, py[i]);
+        if (mj.myPos == mj.posPick && mj.myPos == i) { // Show hotkey if this is my turn.
+          drawHotkey(x, py[i], KEY_CHAR[j]);
+        }
       }
+      x += 2;
     }
-    if (i == mj.myPos && mj.state) { // Draw my game state.
-      var s = '';
-      if (0 != (mj.state & (1 << 2))) { // Can tin.
-        s += '可聽';
-      }
-      if (0 != (mj.state & (1 << 4))) { // Can gun.
-        s += '可槓';
-      }
-      if (0 != (mj.state & (1 << 5))) { // Can pon.
-        s += '可碰';
-      }
-      if (0 != (mj.state & (1 << 6))) { // Can chi.
-        s += '可吃';
-      }
-      if (0 != (mj.state & (1 << 3))) { // Can lon.
-        s += '可胡';
-      }
-      ctx2d.fillText(s, x + CW, py[i]);
+    // Draw my game state.
+    if (i == mj.myPos && mj.state) {
+      drawMyGameState(x, py[i]);
     }
   }
 
@@ -245,11 +269,11 @@ function WebSocketTest() {
 
   mj.ongameroundend = function(pos, lon) {
     darkGameView(ctx2d);
-    if (pos) {
+    ctx2d.textAlign = 'center';
+    ctx2d.fillStyle = 'red';
+    if (pos && lon) {
       // Player lon.
       ctx2d.font = '32pt bold';
-      ctx2d.textAlign = 'center';
-      ctx2d.fillStyle = 'red';
       var x = SW / 2, y = SH / 2;
       ctx2d.fillText('玩家' + pos + '胡牌', x, y);
       ctx2d.font = '26pt bold';
@@ -267,10 +291,12 @@ function WebSocketTest() {
     } else {
       // Game round is over.
       ctx2d.font = '46pt bold';
-      ctx2d.textAlign = 'center';
-      ctx2d.fillStyle = 'red';
       ctx2d.fillText('流局', SW / 2, SH / 2);
     }
+  }
+
+  mj.ongamestate = function() {
+    renderGame();
   }
 
   mj.ongameend = function() {

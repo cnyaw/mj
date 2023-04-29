@@ -16,6 +16,8 @@ function MahjongClient(addr, token) {
   this.pick = -1;
   this.posPick = -1;                    // Current pick card, current pick player pos.
   this.state = null;
+  this.tin = this.gun = this.pon = this.chi = []; // Can tin|gun|pon|chi cards list.
+  this.lon = false;                     // Can lon.
   // Event callback.
   this.onconnect = null;
   this.ondisconnect = null;
@@ -34,6 +36,7 @@ function MahjongClient(addr, token) {
   this.ongamestart = null;
   this.ongameroundstart = null;
   this.ongameroundend = null;
+  this.ongamestate = null;
   this.ongameend = null;
   this.ongameupdate = null;
 
@@ -92,6 +95,8 @@ function MahjongClient(addr, token) {
             mj.myGameId = cmd[1];
             mj.myPos = i - 2;
             mj.state = null;
+            mj.tin = mj.gun = mj.pon = mj.chi = [];
+            mj.lon = false;
             break;
           }
         }
@@ -236,38 +241,46 @@ function MahjongClient(addr, token) {
           var state = cmd[3] & 0xff;
           mj.state = state;
           var idx = 4;
-          var s2 = '';
+          mj.tin = [];
           if (0 != (state & (1 << 2))) { // Can tin.
             var count = cmd[idx];
             idx = idx + 1;
             for (var i = idx; i < cmd.length; i++) {
-              s2 = s2 + cmd[i] + ',';
+              mj.tin.push(cmd[i]);
             }
             idx += count;
           }
+          mj.gun = [];
           if (0 != (state & (1 << 4))) { // Can gun.
             var count = cmd[idx];
             idx = idx + 1;
             for (var i = idx; i < cmd.length; i++) {
-              s2 = s2 + cmd[i] + ',';
+              mj.gun.push(cmd[i]);
             }
             idx += count;
           }
+          mj.pon = [];
           if (0 != (state & (1 << 5))) { // Can pon.
             var count = cmd[idx];
             idx = idx + 1;
+            mj.pon.push(cmd[idx]);
           }
+          mj.chi = [];
           if (0 != (state & (1 << 6))) { // Can chi.
             var count = cmd[idx];
             idx = idx + 1;
             for (var i = idx; i < cmd.length; i++) {
-              s2 = s2 + cmd[i] + ',';
+              mj.chi.push(cmd[i]);
             }
             idx += count;
           }
+          mj.lon = false;
           if (0 != (state & (1 << 3))) { // Can lon.
+            mj.lon = true;
           }
-          renderGame();
+          if (mj.ongamestate) {
+            mj.ongamestate();
+          }
           break;
         case 9:                         // Round end.
           if (mj.ongameroundend) {
