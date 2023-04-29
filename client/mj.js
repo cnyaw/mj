@@ -37,6 +37,9 @@ function drawHotkey(x, y, ch) {
 }
 
 function drawStateCards(x, y, s, cards, key) {
+  ctx2d.fillStyle = 'blue';
+  ctx2d.font = '20px Arial';
+  ctx2d.textAlign = 'start';
   ctx2d.fillText(s, x, y - CH/2);
   for (var i = 0; i < cards.length; i++, x = x + CW) {
     drawCard(cards[i], x, y);

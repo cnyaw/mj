@@ -1014,14 +1014,22 @@ public class MahjongServer {
     //
 
     else if (MahjongGame.AI_EXCHANGE == action) {
-      card = Integer.parseInt(items[2]);
-      if (g.mj.exchange(card)) {
-        playGame_i(g, active, action, card);
+      Vector p = g.mj.patchFlower(active);
+      if (null != p) {
+        sendFlowerPatch(g, active, p);
         sendNextGameState(g);
         resetTimer(g);
         return true;
       } else {
-        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to exchange!\n");
+        card = Integer.parseInt(items[2]);
+        if (g.mj.exchange(card)) {
+          playGame_i(g, active, action, card);
+          sendNextGameState(g);
+          resetTimer(g);
+          return true;
+        } else {
+          log.PrintLog("<--AUR [" + u.id + "] KICK, fail to exchange!\n");
+        }
       }
     }
 
