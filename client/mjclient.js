@@ -401,8 +401,12 @@ function MahjongClient(addr, token) {
     }
   }
 
+  this.isMyTurn = function() {
+    return -1 != mj.pick && -1 != mj.myGameId && mj.myPos == mj.posPick;
+  }
+
   this.exchange = function(card) {
-    if (-1 != mj.myGameId && mj.myPos == mj.posPick) {
+    if (this.isMyTurn()) {
       send(ws, '52,2,' + card);
     }
   }

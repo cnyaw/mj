@@ -466,21 +466,20 @@ function tbLeaveGame() {
 
 window.onkeypress = function(e) {
   e = e || window.event;
-  if (mj.state) {
-    if (' ' == e.key) {
-      mj.pass();
-    }
-    return;
-  }
-  if (-1 == mj.myGameId || mj.myPos != mj.posPick) {
-    return;
-  }
   if (' ' == e.key) {
-    mj.exchange(mj.pick);
-    return;
-  }
-  var i = KEY_CHAR.indexOf(e.key);
-  if (-1 != i && i < mj.pCard[mj.myPos].length) {
-    mj.exchange(mj.pCard[mj.myPos][i]);
+    if (mj.state) {
+      mj.pass();
+    } else if (mj.isMyTurn()) {
+      mj.exchange(mj.pick);
+    }
+  } else {
+    var i = KEY_CHAR.indexOf(e.key);
+    if (mj.state) {
+      // todo
+    } else if (mj.isMyTurn()) {
+      if (-1 != i && i < mj.pCard[mj.myPos].length) {
+        mj.exchange(mj.pCard[mj.myPos][i]);
+      }
+    }
   }
 }
