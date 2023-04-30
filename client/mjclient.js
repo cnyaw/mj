@@ -16,8 +16,8 @@ function MahjongClient(addr, token) {
   this.pick = -1;
   this.posPick = -1;                    // Current pick card, current pick player pos.
   this.state = null;
-  this.tin = this.gun = this.pon = this.chi = []; // Can tin|gun|pon|chi cards list.
-  this.lon = false;                     // Can lon.
+  this.tinCard = this.gunCard = this.ponCard = this.chiCard = []; // Can tin|gun|pon|chi cards list.
+  this.canLon = false;                     // Can lon.
   // Event callback.
   this.onconnect = null;
   this.ondisconnect = null;
@@ -95,7 +95,7 @@ function MahjongClient(addr, token) {
             mj.myGameId = cmd[1];
             mj.myPos = i - 2;
             mj.state = null;
-            mj.tin = mj.gun = mj.pon = mj.chi = [];
+            mj.tinCard = mj.gunCard = mj.ponCard = mj.chiCard = [];
             mj.lon = false;
             break;
           }
@@ -190,33 +190,53 @@ function MahjongClient(addr, token) {
         case 3:                         // Chi.
           var card = cmd[3];
           mj.oCard[pos].push(card, card + 1, card + 2);
-          mj.pCard[pos].splice(0, 3);
-          if (pos != mj.myPos) {
-            mj.posPick = pos;
+          if (pos == mj.myPos) {
+          } else {
+            mj.pCard[pos].splice(0, 3);
             mj.pick = 0;
           }
+          mj.posPick = pos;
           mj.cDrop.pop();
           renderGame();
           break;
         case 4:                         // Pon.
           var card = cmd[3];
           mj.oCard[pos].push(card, card, card);
-          mj.pCard[pos].splice(0, 3);
-          if (pos != mj.myPos) {
-            mj.posPick = pos;
+          var p = mj.pCard[pos];
+          if (pos == mj.myPos) {
+            for (var i = 0; i < p.length; i++) {
+              if (card == p[i]) {
+                p.splice(i, 2);
+                break;
+              }
+            }
+            mj.pick = p[p.length - 1];
+            p.splice(p.length - 1, 1);
+          } else {
+            p.splice(0, 3);
             mj.pick = 0;
           }
+          mj.posPick = pos;
           mj.cDrop.pop();
           renderGame();
           break;
         case 5:                         // Gun.
           var card = cmd[3];
           mj.oCard[pos].push(card, card, card, card);
-          mj.pCard[pos].splice(0, 3);
-          if (pos != mj.myPos) {
-            mj.posPick = pos;
+          if (pos == mj.myPos) {
+            for (var i = 0; i < p.length; i++) {
+              if (card == p[i]) {
+                p.splice(i, 3);
+                break;
+              }
+            }
+            mj.pick = p[p.length - 1];
+            p.splice(p.length - 1, 1);
+          } else {
+            mj.pCard[pos].splice(0, 3);
             mj.pick = 0;
           }
+          mj.posPick = pos;
           mj.cDrop.pop();
           renderGame();
           break;
@@ -241,42 +261,42 @@ function MahjongClient(addr, token) {
           var state = cmd[3] & 0xff;
           mj.state = state;
           var idx = 4;
-          mj.tin = [];
+          mj.tinCard = [];
           if (0 != (state & (1 << 2))) { // Can tin.
             var count = cmd[idx];
             idx = idx + 1;
             for (var i = idx; i < cmd.length; i++) {
-              mj.tin.push(cmd[i]);
+              mj.tinCard.push(cmd[i]);
             }
             idx += count;
           }
-          mj.gun = [];
+          mj.gunCard = [];
           if (0 != (state & (1 << 4))) { // Can gun.
             var count = cmd[idx];
             idx = idx + 1;
             for (var i = idx; i < cmd.length; i++) {
-              mj.gun.push(cmd[i]);
+              mj.gunCard.push(cmd[i]);
             }
             idx += count;
           }
-          mj.pon = [];
+          mj.ponCard = [];
           if (0 != (state & (1 << 5))) { // Can pon.
             var count = cmd[idx];
             idx = idx + 1;
-            mj.pon.push(cmd[idx]);
+            mj.ponCard.push(cmd[idx]);
           }
-          mj.chi = [];
+          mj.chiCard = [];
           if (0 != (state & (1 << 6))) { // Can chi.
             var count = cmd[idx];
             idx = idx + 1;
             for (var i = idx; i < cmd.length; i++) {
-              mj.chi.push(cmd[i]);
+              mj.chiCard.push(cmd[i]);
             }
             idx += count;
           }
-          mj.lon = false;
+          mj.canLon = false;
           if (0 != (state & (1 << 3))) { // Can lon.
-            mj.lon = true;
+            mj.canLon = true;
           }
           if (mj.ongamestate) {
             mj.ongamestate();
@@ -408,6 +428,48 @@ function MahjongClient(addr, token) {
   this.exchange = function(card) {
     if (this.isMyTurn()) {
       send(ws, '52,2,' + card);
+    }
+  }
+
+  this.tin = function(card) {
+    for (var i = 0; i < mj.tinCard.length; i++) {
+      if (card == mj.tinCard[i]) {
+        send(ws, '52,11,' + card);
+        return;
+      }
+    }
+  }
+
+  this.gun = function(card) {
+    for (var i = 0; i < mj.gunCard.length; i++) {
+      if (card == mj.gunCard[i]) {
+        send(ws, '52,5,' + card);
+        return;
+      }
+    }
+  }
+
+  this.pon = function(card) {
+    for (var i = 0; i < mj.ponCard.length; i++) {
+      if (card == mj.ponCard[i]) {
+        send(ws, '52,4,' + card);
+        return;
+      }
+    }
+  }
+
+  this.chi = function(card) {
+    for (var i = 0; i < mj.chiCard.length; i++) {
+      if (card == mj.chiCard[i]) {
+        send(ws, '52,3,' + card);
+        return;
+      }
+    }
+  }
+
+  this.lon = function() {
+    if (mj.canLon) {
+      send(ws, '52,6');
     }
   }
 }

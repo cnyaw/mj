@@ -52,22 +52,22 @@ function drawStateCards(x, y, s, cards, key) {
 function drawMyGameState(x, y) {
   var key = 0;
   if (0 != (mj.state & (1 << 2))) { // Can tin.
-    var xk = drawStateCards(x, y, '聽', mj.tin, key);
+    var xk = drawStateCards(x, y, '聽', mj.tinCard, key);
     x = xk[0];
     key = xk[1];
   }
   if (0 != (mj.state & (1 << 4))) { // Can gun.
-    var xk = drawStateCards(x, y, '槓', mj.gun, key);
+    var xk = drawStateCards(x, y, '槓', mj.gunCard, key);
     x = xk[0];
     key = xk[1];
   }
   if (0 != (mj.state & (1 << 5))) { // Can pon.
-    var xk = drawStateCards(x, y, '碰', mj.pon, key);
+    var xk = drawStateCards(x, y, '碰', mj.ponCard, key);
     x = xk[0];
     key = xk[1];
   }
   if (0 != (mj.state & (1 << 6))) { // Can chi.
-    var xk = drawStateCards(x, y, '吃', mj.chi, key);
+    var xk = drawStateCards(x, y, '吃', mj.chiCard, key);
     x = xk[0];
     key = xk[1];
   }
@@ -475,7 +475,34 @@ window.onkeypress = function(e) {
   } else {
     var i = KEY_CHAR.indexOf(e.key);
     if (mj.state) {
-      // todo
+      var j = 0;
+      for (; j < mj.tinCard.length; j++) {
+        if (i == j) {
+          mj.tin(mj.tinCard[j]);
+          return;
+        }
+      }
+      for (; j < mj.gunCard.length; j++) {
+        if (i == j) {
+          mj.gun(mj.gunCard[j]);
+          return;
+        }
+      }
+      for (; j < mj.ponCard.length; j++) {
+        if (i == j) {
+          mj.pon(mj.ponCard[j]);
+          return;
+        }
+      }
+      for (; j < mj.chiCard.length; j++) {
+        if (i == j) {
+          mj.chi(mj.chiCard[j]);
+          return;
+        }
+      }
+      if (j == i) {
+        mj.lon();
+      }
     } else if (mj.isMyTurn()) {
       if (-1 != i && i < mj.pCard[mj.myPos].length) {
         mj.exchange(mj.pCard[mj.myPos][i]);
