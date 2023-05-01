@@ -96,7 +96,7 @@ function MahjongClient(addr, token) {
             mj.myPos = i - 2;
             mj.state = null;
             mj.tinCard = mj.gunCard = mj.ponCard = mj.chiCard = [];
-            mj.lon = false;
+            mj.canLon = false;
             break;
           }
         }

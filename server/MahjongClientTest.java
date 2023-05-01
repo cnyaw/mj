@@ -155,7 +155,6 @@ public class MahjongClientTest {
           int act = Integer.parseInt(items[2]);
           int c, c2, count;
           String s2 = "";
-
           switch (act)
           {
           case MahjongGame.AI_PASS:

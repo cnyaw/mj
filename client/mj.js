@@ -72,6 +72,11 @@ function drawMyGameState(x, y) {
     key = xk[1];
   }
   if (0 != (mj.state & (1 << 3))) { // Can lon.
+    ctx2d.fillStyle = 'blue';
+    ctx2d.font = '20px Arial';
+    ctx2d.textAlign = 'start';
+    ctx2d.fillText('胡', x, y);
+    drawHotkey(x, y, KEY_CHAR[key]);
   }
 }
 
