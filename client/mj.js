@@ -279,7 +279,7 @@ function WebSocketTest() {
     darkGameView(ctx2d);
     ctx2d.textAlign = 'center';
     ctx2d.fillStyle = 'red';
-    if (pos && lon) {
+    if (null != pos && null != lon) {
       // Player lon.
       ctx2d.font = '32pt bold';
       var x = SW / 2, y = SH / 2;
