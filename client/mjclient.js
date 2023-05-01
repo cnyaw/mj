@@ -191,6 +191,12 @@ function MahjongClient(addr, token) {
           var card = cmd[3];
           mj.oCard[pos].push(card, card + 1, card + 2);
           if (pos == mj.myPos) {
+            var p = mj.pCard[pos];
+            p.push(mj.cDrop[mj.cDrop.length - 1]);
+            p.sort(sortNumber); // Make sure sort by numbers.
+            [card, card + 1, card + 2].map(x => {var i = p.indexOf(x); if (-1 != i) p.splice(i, 1);} );
+            mj.pick = p[p.length - 1];
+            p.splice(p.length - 1, 1);
           } else {
             mj.pCard[pos].splice(0, 3);
             mj.pick = -1;
