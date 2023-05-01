@@ -175,7 +175,7 @@ function MahjongClient(addr, token) {
           break;
         case 2:                         // Exchange.
           mj.cDrop.push(cmd[3]);
-          if (pos == mj.myPos && mj.pick != cmd[3]) {
+          if (pos == mj.myPos && -1 != mj.pick && mj.pick != cmd[3]) {
             var p = mj.pCard[pos];
             for (var i = 0; i < p.length; i++) {
               if (cmd[3] == p[i]) {
