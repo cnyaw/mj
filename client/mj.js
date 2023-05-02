@@ -213,6 +213,7 @@ function WebSocketTest() {
     if (-1 != mj.myGameId) {
       removeButton('tbNewGame');
       removeButton('tbJoinGame');
+      addLeaveGameButton();
     }
     if (p1 == mj.myId) {
       addStartGameButton();
@@ -231,6 +232,7 @@ function WebSocketTest() {
     if (id == mj.myId) {
       removeButton('tbNewGame');
       removeButton('tbJoinGame');
+      addLeaveGameButton();
     }
   }
 
@@ -402,9 +404,8 @@ function removeGame(id) {
 
 function getToolbarHtml() {
   var s = '<span>';
-  s += '<a id="tbNewGame" class="btn" href="#" onclick="tbNewGame()">New Game</a>';
+  s += ' <a id="tbNewGame" class="btn" href="#" onclick="tbNewGame()">New Game</a>';
   s += ' <a id="tbJoinGame" class="btn" href="#" onclick="tbJoinGame()">Join Game</a>';
-  s += ' <a class="btn" href="#" onclick="tbLeaveGame()">Leave Game</a>';
   s += '</span>';
   return s;
 }
@@ -425,6 +426,11 @@ function removeButton(id) {
 function addStartGameButton() {
   var sse = document.getElementById('sse');
   sse.innerHTML += ' <a id="tbStartGame" class="btn" href="#" onclick="tbStartGame()">Start Game</a>';
+}
+
+function addLeaveGameButton() {
+  var sse = document.getElementById('sse');
+  sse.innerHTML += ' <a class="btn" href="#" onclick="tbLeaveGame()">Leave Game</a>';
 }
 
 function tbNewGame() {
