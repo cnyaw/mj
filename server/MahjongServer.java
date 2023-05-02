@@ -908,6 +908,8 @@ public class MahjongServer {
 
   boolean startGame(AUR u) throws Exception {
 
+    log.PrintLog("AUR [" + u.id + "] attempt to start game!\n");
+
     //
     // Is player in a game?
     //
@@ -958,7 +960,7 @@ public class MahjongServer {
 
     usendAll(null, MahjongProtocol.getStartGameCmd(g.id));
 
-    log.PrintLog("Game [" + g.id + "] start!!!\n");
+    log.PrintLog("-->Game [" + g.id + "] start!!!\n");
 
     return true;
   }
@@ -1443,7 +1445,7 @@ public class MahjongServer {
   // Initialize game.
   //
 
-  boolean initGame(AGR g) {
+  boolean initGame(AGR g) throws Exception {
 
     //
     // Start a new game.
@@ -1513,7 +1515,9 @@ public class MahjongServer {
   // Game is complete.
   //
 
-  boolean completeGame(AGR g) {
+  boolean completeGame(AGR g) throws Exception {
+
+    log.PrintLog("-->Game [" + g.id + "] complete!!!\n");
 
     //
     // Notify game is finished.
