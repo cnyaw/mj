@@ -1517,8 +1517,6 @@ public class MahjongServer {
 
   boolean completeGame(AGR g) throws Exception {
 
-    log.PrintLog("-->Game [" + g.id + "] complete!!!\n");
-
     //
     // Notify game is finished.
     //
@@ -1537,6 +1535,8 @@ public class MahjongServer {
 
     agr[g.id] = null;
     nAgr -= 1;
+
+    log.PrintLog("-->Game [" + g.id + "] complete!!!  #" + nAgr + "g\n");
 
     //
     // Notify game is closed.
