@@ -6,6 +6,7 @@
 
 import java.io.*;
 import java.util.*;
+import java.text.SimpleDateFormat;
 
 //
 // Mahjong log file support.
@@ -36,7 +37,8 @@ public class MahjongLog {
 
   void PrintLog(String mess) throws IOException {
     checkLogFileDate();
-    String head = (new Date()).toString() + ", ";
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+    String head = "[" + sdf.format(new Date()) + "] ";
     System.out.print(head + mess);
     log.write(head + mess);
     log.flush();
