@@ -36,7 +36,8 @@ function drawHotkey(x, y, ch) {
   ctx2d.fillText(ch, x + CW/2, y - 4);
 }
 
-function drawStateCards(x, y, s, cards, key) {
+function drawStateCards(m, s, cards) {
+  var x = m[0], y = m[1], key = m[2];
   ctx2d.fillStyle = 'blue';
   ctx2d.font = '20px Arial';
   ctx2d.textAlign = 'start';
@@ -46,37 +47,29 @@ function drawStateCards(x, y, s, cards, key) {
     drawHotkey(x, y, KEY_CHAR[key]);
     key += 1;
   }
-  return [x, key];
+  return [x, y, key];
 }
 
 function drawMyGameState(x, y) {
-  var key = 0;
+  var m = [x, y, 0];
   if (0 != (mj.state & (1 << 2))) { // Can tin.
-    var xk = drawStateCards(x, y, '聽', mj.tinCard, key);
-    x = xk[0];
-    key = xk[1];
+    m = drawStateCards(m, '聽', mj.tinCard);
   }
   if (0 != (mj.state & (1 << 4))) { // Can gun.
-    var xk = drawStateCards(x, y, '槓', mj.gunCard, key);
-    x = xk[0];
-    key = xk[1];
+    m = drawStateCards(m, '槓', mj.gunCard);
   }
   if (0 != (mj.state & (1 << 5))) { // Can pon.
-    var xk = drawStateCards(x, y, '碰', mj.ponCard, key);
-    x = xk[0];
-    key = xk[1];
+    m = drawStateCards(m, '碰', mj.ponCard);
   }
   if (0 != (mj.state & (1 << 6))) { // Can chi.
-    var xk = drawStateCards(x, y, '吃', mj.chiCard, key);
-    x = xk[0];
-    key = xk[1];
+    m = drawStateCards(m, '吃', mj.chiCard);
   }
   if (0 != (mj.state & (1 << 3))) { // Can lon.
     ctx2d.fillStyle = 'blue';
     ctx2d.font = '20px Arial';
     ctx2d.textAlign = 'start';
-    ctx2d.fillText('胡', x, y);
-    drawHotkey(x, y, KEY_CHAR[key]);
+    ctx2d.fillText('胡', m[0], m[1]);
+    drawHotkey(m[0], m[1], KEY_CHAR[m[2]]);
   }
 }
 
