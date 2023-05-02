@@ -769,7 +769,7 @@ public class MahjongServer {
     //
 
     if (0 > iAgr || agr.length <= iAgr || null == agr[iAgr]) {
-      log.PrintLog("<--AUR [" + u.id + "] KICK, join invalid game!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, join invalid game! (" + iAgr + ")\n");
       closeAur(u);
       return false;
     }
@@ -913,7 +913,7 @@ public class MahjongServer {
     //
 
     if (-1 == u.iAgr) {
-      log.PrintLog("<--AUR [" + u.id + "] KICK, not in game!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, start game but not in game!\n");
       closeAur(u);
       return false;
     }
@@ -925,7 +925,7 @@ public class MahjongServer {
     //
 
     if (g.iAur[0] != u.id) {
-      log.PrintLog("<--AUR [" + u.id + "] KICK, not game creater!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, start game but not game creater!\n");
       closeAur(u);
       return false;
     }
@@ -935,7 +935,7 @@ public class MahjongServer {
     //
 
     if (g.running) {
-      log.PrintLog("<--AUR [" + u.id + "] KICK, game already start!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, start game but game already start!\n");
       closeAur(u);
       return false;
     }
@@ -1028,7 +1028,7 @@ public class MahjongServer {
           resetTimer(g);
           return true;
         } else {
-          log.PrintLog("<--AUR [" + u.id + "] KICK, fail to exchange!\n");
+          log.PrintLog("<--AUR [" + u.id + "] KICK, fail to exchange! (" + card + ")\n");
         }
       }
     }
@@ -1044,7 +1044,7 @@ public class MahjongServer {
         resetTimer(g);
         return true;
       } else {
-        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to chi!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to chi! (" + card + ")\n");
       }
     }
 
@@ -1059,7 +1059,7 @@ public class MahjongServer {
         resetTimer(g);
         return true;
       } else {
-        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to pon!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to pon! (" + card + ")\n");
       }
     }
 
@@ -1074,7 +1074,7 @@ public class MahjongServer {
         resetTimer(g);
         return true;
       } else {
-        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to gun!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to gun! (" + card + ")\n");
       }
     }
 
@@ -1108,7 +1108,7 @@ public class MahjongServer {
         sendNextGameState(g);
         resetTimer(g);
       } else {
-        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to tin!\n");
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to tin! (" + card + ")\n");
       }
     }
 
@@ -1117,7 +1117,7 @@ public class MahjongServer {
     //
 
     else {
-      log.PrintLog("<--AUR [" + u.id + "] KICK, invalid command!\n");
+      log.PrintLog("<--AUR [" + u.id + "] KICK, invalid play game command! (" + action + ")\n");
     }
 
     closeAur(u);
