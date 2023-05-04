@@ -166,6 +166,7 @@ function MahjongClient(addr, token) {
       case 0x34:                        // Game action.
         mj.state = null;
         var pos = cmd[1];
+        var p = mj.pCard[pos];
         switch (cmd[2] & 0xff)
         {
         case 1:                         // Pass.
@@ -176,11 +177,10 @@ function MahjongClient(addr, token) {
         case 2:                         // Exchange.
           mj.cDrop.push(cmd[3]);
           if (pos == mj.myPos && -1 != mj.pick && mj.pick != cmd[3]) {
-            var p = mj.pCard[pos];
             for (var i = 0; i < p.length; i++) {
               if (cmd[3] == p[i]) {
                 p[i] = mj.pick;
-                p.sort(sortNumber); // Make sure sort by numbers.
+                p.sort(sortNumber);     // Make sure sort by numbers.
                 break;
               }
             }
@@ -191,14 +191,12 @@ function MahjongClient(addr, token) {
           var card = cmd[3];
           mj.oCard[pos].push(card, card + 1, card + 2);
           if (pos == mj.myPos) {
-            var p = mj.pCard[pos];
             p.push(mj.cDrop[mj.cDrop.length - 1]);
-            p.sort(sortNumber); // Make sure sort by numbers.
+            p.sort(sortNumber);         // Make sure sort by numbers.
             [card, card + 1, card + 2].map(x => {var i = p.indexOf(x); if (-1 != i) p.splice(i, 1);} );
-            mj.pick = p[p.length - 1];
-            p.splice(p.length - 1, 1);
+            mj.pick = p.pop();
           } else {
-            mj.pCard[pos].splice(0, 3);
+            p.splice(0, 3);
             mj.pick = -1;
           }
           mj.posPick = pos;
@@ -208,7 +206,6 @@ function MahjongClient(addr, token) {
         case 4:                         // Pon.
           var card = cmd[3];
           mj.oCard[pos].push(card, card, card);
-          var p = mj.pCard[pos];
           if (pos == mj.myPos) {
             for (var i = 0; i < p.length; i++) {
               if (card == p[i]) {
@@ -216,8 +213,7 @@ function MahjongClient(addr, token) {
                 break;
               }
             }
-            mj.pick = p[p.length - 1];
-            p.splice(p.length - 1, 1);
+            mj.pick = p.pop();
           } else {
             p.splice(0, 3);
             mj.pick = -1;
@@ -229,7 +225,6 @@ function MahjongClient(addr, token) {
         case 5:                         // Gun.
           var card = cmd[3];
           mj.oCard[pos].push(card, card, card, card);
-          var p = mj.pCard[pos];
           if (pos == mj.myPos) {
             for (var i = 0; i < p.length; i++) {
               if (card == p[i]) {
@@ -237,8 +232,7 @@ function MahjongClient(addr, token) {
                 break;
               }
             }
-            mj.pick = p[p.length - 1];
-            p.splice(p.length - 1, 1);
+            mj.pick = p.pop();
           } else {
             p.splice(0, 3);
             mj.pick = -1;
@@ -340,14 +334,14 @@ function MahjongClient(addr, token) {
             mj.oCard[pos].push(c);
             var c2 = cmd[i + 1];
             if (0 != c2) {
-              var idx = mj.pCard[pos].indexOf(c);
+              var idx = p.indexOf(c);
               if (-1 != idx) {
-                mj.pCard[pos][idx] = c2;
+                p[idx] = c2;
               }
             }
           }
           if (pos == mj.myPos) {
-            mj.pCard[pos].sort(sortNumber); // Make sure sort by numbers.
+            p.sort(sortNumber);         // Make sure sort by numbers.
           }
           renderGame();
           break;
