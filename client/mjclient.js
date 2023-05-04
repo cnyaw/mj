@@ -229,6 +229,7 @@ function MahjongClient(addr, token) {
         case 5:                         // Gun.
           var card = cmd[3];
           mj.oCard[pos].push(card, card, card, card);
+          var p = mj.pCard[pos];
           if (pos == mj.myPos) {
             for (var i = 0; i < p.length; i++) {
               if (card == p[i]) {
@@ -239,7 +240,7 @@ function MahjongClient(addr, token) {
             mj.pick = p[p.length - 1];
             p.splice(p.length - 1, 1);
           } else {
-            mj.pCard[pos].splice(0, 3);
+            p.splice(0, 3);
             mj.pick = -1;
           }
           mj.posPick = pos;
