@@ -139,7 +139,7 @@ function MahjongClient(addr, token) {
           mj.ongamestart(cmd[1]);
         }
         break;
-      case 0x32:                        // Game init.
+      case 0x32:                        // Round start.
         mj.cDrop = [];
         mj.pCard = [];
         mj.oCard = [];
@@ -235,9 +235,10 @@ function MahjongClient(addr, token) {
                 break;
               }
             }
+            p.push(cmd[4]);             // Append from hdCards.
             mj.pick = p.pop();
           } else {
-            p.splice(0, 3);
+            p.splice(0, 2);
             mj.pick = -1;
           }
           mj.posPick = pos;
