@@ -380,6 +380,7 @@ function MahjongClient(addr, token) {
       var count = cmd[idx];
       idx = idx + 1;
       mj.ponCard.push(cmd[idx]);
+      idx += count;
     }
     mj.chiCard = [];
     if (0 != (state & (1 << 6))) { // Can chi.
