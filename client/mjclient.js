@@ -15,7 +15,7 @@ function MahjongClient(addr, token) {
   this.cDrop = null;                    // Drop cards.
   this.pick = -1;
   this.posPick = -1;                    // Current pick card, current pick player pos.
-  this.state = null;
+  this.state = 0;
   this.tinCard = this.gunCard = this.ponCard = this.chiCard = []; // Can tin|gun|pon|chi cards list.
   this.canLon = false;                     // Can lon.
   // Event callback.
@@ -94,7 +94,7 @@ function MahjongClient(addr, token) {
           if (cmd[i] == mj.myId) {
             mj.myGameId = cmd[1];
             mj.myPos = i - 2;
-            mj.state = null;
+            mj.state = 0;
             mj.tinCard = mj.gunCard = mj.ponCard = mj.chiCard = [];
             mj.canLon = false;
             break;
@@ -116,14 +116,14 @@ function MahjongClient(addr, token) {
         }
         if (cmd[2] == mj.myId || cmd[1] == mj.myGameId) {
           mj.myGameId = mj.myPos = -1;
-          mj.state = null;
+          mj.state = 0;
         }
         break;
       case 0x23:                        // Join game.
         if (mj.myId == cmd[2]) {
           mj.myGameId = cmd[1];
           mj.myPos = cmd[3];
-          mj.state = null;
+          mj.state = 0;
         }
         if (mj.onjoingame) {
           mj.onjoingame(cmd[2], cmd[1], cmd[3]);
@@ -164,7 +164,7 @@ function MahjongClient(addr, token) {
         }
         break;
       case 0x34:                        // Game action.
-        mj.state = null;
+        mj.state = 0;
         var pos = cmd[1];
         var p = mj.pCard[pos];
         switch (cmd[2] & 0xff)
@@ -256,49 +256,13 @@ function MahjongClient(addr, token) {
         case 7:                         // Pick.
           mj.posPick = pos;
           mj.pick = cmd[3];
+          if (pos == mj.myPos) {
+            //parseState(cmd, 4);
+          }
           renderGame();
           break;
         case 8:                         // State.
-          var state = cmd[3] & 0xff;
-          mj.state = state;
-          var idx = 4;
-          mj.tinCard = [];
-          if (0 != (state & (1 << 2))) { // Can tin.
-            var count = cmd[idx];
-            idx = idx + 1;
-            for (var i = idx; i < idx + count; i++) {
-              mj.tinCard.push(cmd[i]);
-            }
-            idx += count;
-          }
-          mj.gunCard = [];
-          if (0 != (state & (1 << 4))) { // Can gun.
-            var count = cmd[idx];
-            idx = idx + 1;
-            for (var i = idx; i < idx + count; i++) {
-              mj.gunCard.push(cmd[i]);
-            }
-            idx += count;
-          }
-          mj.ponCard = [];
-          if (0 != (state & (1 << 5))) { // Can pon.
-            var count = cmd[idx];
-            idx = idx + 1;
-            mj.ponCard.push(cmd[idx]);
-          }
-          mj.chiCard = [];
-          if (0 != (state & (1 << 6))) { // Can chi.
-            var count = cmd[idx];
-            idx = idx + 1;
-            for (var i = idx; i < idx + count; i++) {
-              mj.chiCard.push(cmd[i]);
-            }
-            idx += count;
-          }
-          mj.canLon = false;
-          if (0 != (state & (1 << 3))) { // Can lon.
-            mj.canLon = true;
-          }
+          parseState(cmd, 3);
           if (mj.ongamestate) {
             mj.ongamestate();
           }
@@ -383,6 +347,49 @@ function MahjongClient(addr, token) {
   function renderGame() {
     if (mj.ongameupdate) {
       mj.ongameupdate();
+    }
+  }
+
+  function parseState(cmd, idx) {
+    var state = cmd[idx] & 0xff;
+    mj.state = state;
+    idx += 1;
+    mj.tinCard = [];
+    if (0 != (state & (1 << 2))) { // Can tin.
+      var count = cmd[idx];
+      idx = idx + 1;
+      for (var i = idx; i < idx + count; i++) {
+        mj.tinCard.push(cmd[i]);
+      }
+      idx += count;
+    }
+    mj.gunCard = [];
+    if (0 != (state & (1 << 4))) { // Can gun.
+      var count = cmd[idx];
+      idx = idx + 1;
+      for (var i = idx; i < idx + count; i++) {
+        mj.gunCard.push(cmd[i]);
+      }
+      idx += count;
+    }
+    mj.ponCard = [];
+    if (0 != (state & (1 << 5))) { // Can pon.
+      var count = cmd[idx];
+      idx = idx + 1;
+      mj.ponCard.push(cmd[idx]);
+    }
+    mj.chiCard = [];
+    if (0 != (state & (1 << 6))) { // Can chi.
+      var count = cmd[idx];
+      idx = idx + 1;
+      for (var i = idx; i < idx + count; i++) {
+        mj.chiCard.push(cmd[i]);
+      }
+      idx += count;
+    }
+    mj.canLon = false;
+    if (0 != (state & (1 << 3))) { // Can lon.
+      mj.canLon = true;
     }
   }
 

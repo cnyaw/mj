@@ -68,7 +68,7 @@ function drawMyGameState(x, y) {
     ctx2d.fillStyle = 'blue';
     ctx2d.font = '20px Arial';
     ctx2d.textAlign = 'start';
-    ctx2d.fillText('胡', m[0], m[1]);
+    ctx2d.fillText('胡', m[0], m[1] - CH/2);
     drawHotkey(m[0], m[1], KEY_CHAR[m[2]]);
   }
 }
@@ -110,15 +110,11 @@ function renderGame() {
     if (0 != mj.pCard[i].length) {
       for (var j = 0; j < mj.pCard[i].length; j++, x = x + CW) {
         drawCard(mj.pCard[i][j], x, py[i]);
-        if (mj.myPos == mj.posPick && mj.myPos == i) { // Show hotkey if this is my turn.
+        if (0 == mj.state && mj.myPos == mj.posPick && mj.myPos == i) { // Show hotkey if this is my turn.
           drawHotkey(x, py[i], KEY_CHAR[j]);
         }
       }
       x += 2;
-    }
-    // Draw my game state.
-    if (i == mj.myPos && mj.state) {
-      drawMyGameState(x, py[i]);
     }
   }
 
@@ -143,6 +139,12 @@ function renderGame() {
       ox += 2
     }
     drawCard(mj.pick, ox + CW * (mj.oCard[mj.posPick].length + mj.pCard[mj.posPick].length), y);
+  }
+
+  // Draw my game state.
+  if (0 != mj.state) {
+    var ox = 18, y = py[0];
+    drawMyGameState(ox + CW * (mj.oCard[0].length + mj.pCard[0].length), y);
   }
 }
 
@@ -471,14 +473,14 @@ function tbLeaveGame() {
 window.onkeypress = function(e) {
   e = e || window.event;
   if (' ' == e.key) {
-    if (mj.state) {
+    if (0 != mj.state) {
       mj.pass();
     } else if (mj.isMyTurn()) {
       mj.exchange(mj.pick);
     }
   } else {
     var i = KEY_CHAR.indexOf(e.key);
-    if (mj.state) {
+    if (0 != mj.state) {
       var j = 0;
       for (; j < mj.tinCard.length; j++) {
         if (i == j) {
