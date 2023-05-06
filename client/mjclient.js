@@ -235,8 +235,7 @@ function MahjongClient(addr, token) {
                 break;
               }
             }
-            p.push(cmd[4]);             // Append from hdCards.
-            mj.pick = p.pop();
+            mj.pick = cmd[4];           // Append from hdCards.
           } else {
             p.splice(0, 2);
             mj.pick = -1;
