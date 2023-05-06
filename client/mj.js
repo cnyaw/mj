@@ -65,6 +65,7 @@ function drawMyGameState(x, y) {
     m = drawStateCards(m, '吃', mj.chiCard);
   }
   if (0 != (mj.state & (1 << 3))) { // Can lon.
+    drawCard(mj.cDrop[mj.cDrop.length - 1], m[0], m[1]);
     ctx2d.fillStyle = 'blue';
     ctx2d.font = '20px Arial';
     ctx2d.textAlign = 'start';
@@ -143,8 +144,8 @@ function renderGame() {
 
   // Draw my game state.
   if (0 != mj.state) {
-    var ox = 18, y = py[0];
-    drawMyGameState(ox + CW * (mj.oCard[0].length + mj.pCard[0].length), y);
+    var ox = 18, y = py[mj.myPos];
+    drawMyGameState(ox + CW * (mj.oCard[mj.myPos].length + mj.pCard[mj.myPos].length), y);
   }
 }
 
