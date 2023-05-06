@@ -150,8 +150,11 @@ function MahjongClient(addr, token) {
             mj.pCard[i][j] = 0;
           }
         }
-        for (var i = 7; i < cmd.length; i++) {
-          mj.pCard[mj.myPos][i - 7] = cmd[i];
+        for (var i = 0; i < 16; i++) {
+          mj.pCard[mj.myPos][i] = cmd[i + 7];
+        }
+        if (23 == cmd.length) {
+          mj.pick = cmd[22];
         }
         if (mj.ongameroundstart) {
           mj.ongameroundstart(cmd[1], cmd[2], cmd[3], cmd[4], cmd[5], cmd[6]);
