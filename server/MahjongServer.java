@@ -1016,22 +1016,14 @@ public class MahjongServer {
     //
 
     else if (MahjongGame.AI_EXCHANGE == action) {
-      Vector p = g.mj.patchFlower(active);
-      if (null != p) {
-        sendFlowerPatch(g, active, p);
+      card = Integer.parseInt(items[2]);
+      if (g.mj.exchange(card)) {
+        playGame_i(g, active, action, card);
         sendNextGameState(g);
         resetTimer(g);
         return true;
       } else {
-        card = Integer.parseInt(items[2]);
-        if (g.mj.exchange(card)) {
-          playGame_i(g, active, action, card);
-          sendNextGameState(g);
-          resetTimer(g);
-          return true;
-        } else {
-          log.PrintLog("<--AUR [" + u.id + "] KICK, fail to exchange! (" + card + ")\n");
-        }
+        log.PrintLog("<--AUR [" + u.id + "] KICK, fail to exchange! (" + card + ")\n");
       }
     }
 
@@ -1321,10 +1313,22 @@ public class MahjongServer {
     }
 
     //
-    // If the active player is not in the game or auto play is enabled then AI takes control.
+    // Auto patch flower card of active player.
     //
 
     int active = g.mj.getActive();
+
+    Vector p = g.mj.patchFlower(active);
+    if (null != p) {
+      sendFlowerPatch(g, active, p);
+      sendNextGameState(g);
+      resetTimer(g);
+      return true;
+    }
+
+    //
+    // If the active player is not in the game or auto play is enabled then AI takes control.
+    //
 
     if (-1 == g.iAur[active] || aur[g.iAur[active]].auto) {
 
@@ -1335,27 +1339,10 @@ public class MahjongServer {
       if (System.currentTimeMillis() + (TIMEOUT_PLAY_GAME - TIMEOUT_AI_PLAY_GAME) * 1000 > g.timeout) {
 
         //
-        // Patch the pick card automatically if this is a flower card.
+        // Process by AI.
         //
 
-        Vector p = g.mj.patchFlower(active);
-        if (null != p) {
-
-          //
-          // Notify the patch if this is really a flower card.
-          //
-
-          sendFlowerPatch(g, active, p);
-
-        } else {
-
-          //
-          // Process by AI.
-          //
-
-          autoPlayGame(g);
-
-        }
+        autoPlayGame(g);
 
         //
         // Reset timeout timer now.
@@ -1391,32 +1378,20 @@ public class MahjongServer {
 
       } else {
 
-        Vector p = g.mj.patchFlower(active);
-        if (null != p) {
+        //
+        // Discad card.
+        //
 
-          //
-          // Notify the patch if this is really a flower card.
-          //
+        g.mj.discard(pick);
 
-          sendFlowerPatch(g, active, p);
+        //
+        // Notify discard pick card.
+        //
 
-        } else {
+        String sCmd = MahjongProtocol.getGameActionCmd(active, MahjongGame.AI_EXCHANGE);
+        sCmd += "," + pick;
 
-          //
-          // Discad card.
-          //
-
-          g.mj.discard(pick);
-
-          //
-          // Notify discard pick card.
-          //
-
-          String sCmd = MahjongProtocol.getGameActionCmd(active, MahjongGame.AI_EXCHANGE);
-          sCmd += "," + pick;
-
-          send(g, sCmd);
-        }
+        send(g, sCmd);
       }
 
       //
@@ -1561,7 +1536,7 @@ public class MahjongServer {
     int pick = g.mj.getPick();
 
     //
-    // Wait for discarding a card after Chi/Pon etc states..
+    // Wait for discarding a card after Chi/Pon etc states.
     //
 
     if (0 == pick) {
@@ -1796,7 +1771,7 @@ public class MahjongServer {
       int iPlayer = (active - i + MahjongGame.NUM_PLAYER) % MahjongGame.NUM_PLAYER;
 
       //
-      // Loop patch flower cards until no flower card to path. The format
+      // Loop patch flower cards until no flower card to patch. The format
       // of return vector is: flower pick flower pick ...
       //
 
