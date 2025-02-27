@@ -16,7 +16,9 @@ public class MahjongClientTest {
     // Init.
     //
 
-    Socket s = new Socket((String)null, MahjongServer.SERVER_PORT);
+    String addr = 0 < args.length ? args[0] : null;
+
+    Socket s = new Socket((String)addr, MahjongServer.SERVER_PORT);
     DataInputStream is = new DataInputStream(s.getInputStream());
     OutputStream os = s.getOutputStream();
 
