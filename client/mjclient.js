@@ -484,4 +484,49 @@ function MahjongClient(addr, token) {
       send(ws, '52,6');
     }
   }
+
+  this.onkeypress = function(key) {
+    if (1000 == key) {
+      if (0 != mj.state) {
+        mj.pass();
+      } else if (mj.isMyTurn()) {
+        mj.exchange(mj.pick);
+      }
+    } else {
+      if (0 != mj.state) {
+        var i = mj.isMyTurn() ? mj.pCard[mj.myPos].length : 0;
+        for (; i < mj.tinCard.length; i++) {
+          if (key == i) {
+            mj.tin(mj.tinCard[i]);
+            return;
+          }
+        }
+        for (; i < mj.gunCard.length; i++) {
+          if (key == i) {
+            mj.gun(mj.gunCard[i]);
+            return;
+          }
+        }
+        for (; i < mj.ponCard.length; i++) {
+          if (key == i) {
+            mj.pon(mj.ponCard[i]);
+            return;
+          }
+        }
+        for (; i < mj.chiCard.length; i++) {
+          if (key == i) {
+            mj.chi(mj.chiCard[i]);
+            return;
+          }
+        }
+        if (i == key) {
+          mj.lon();
+        }
+      } else if (mj.isMyTurn()) {
+        if (-1 != key && key < mj.pCard[mj.myPos].length) {
+          mj.exchange(mj.pCard[mj.myPos][key]);
+        }
+      }
+    }
+  }
 }

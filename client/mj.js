@@ -482,47 +482,11 @@ window.onkeypress = function(e) {
   if (!mj) {
     return;
   }
+  var key;
   if (' ' == e.key) {
-    if (0 != mj.state) {
-      mj.pass();
-    } else if (mj.isMyTurn()) {
-      mj.exchange(mj.pick);
-    }
+    key = 1000;
   } else {
-    var i = KEY_CHAR.indexOf(e.key);
-    if (0 != mj.state) {
-      var j = mj.isMyTurn() ? mj.pCard[mj.myPos].length : 0;
-      for (; j < mj.tinCard.length; j++) {
-        if (i == j) {
-          mj.tin(mj.tinCard[j]);
-          return;
-        }
-      }
-      for (; j < mj.gunCard.length; j++) {
-        if (i == j) {
-          mj.gun(mj.gunCard[j]);
-          return;
-        }
-      }
-      for (; j < mj.ponCard.length; j++) {
-        if (i == j) {
-          mj.pon(mj.ponCard[j]);
-          return;
-        }
-      }
-      for (; j < mj.chiCard.length; j++) {
-        if (i == j) {
-          mj.chi(mj.chiCard[j]);
-          return;
-        }
-      }
-      if (j == i) {
-        mj.lon();
-      }
-    } else if (mj.isMyTurn()) {
-      if (-1 != i && i < mj.pCard[mj.myPos].length) {
-        mj.exchange(mj.pCard[mj.myPos][i]);
-      }
-    }
+    key = KEY_CHAR.indexOf(e.key);
   }
+  mj.onkeypress(key);
 }
