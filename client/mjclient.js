@@ -260,7 +260,7 @@ function MahjongClient(addr, token) {
           mj.posPick = pos;
           mj.pick = cmd[3];
           if (pos == mj.myPos) {
-            //parseState(cmd, 4);
+            parseState(cmd, 4);
           }
           renderGame();
           break;

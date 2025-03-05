@@ -111,7 +111,7 @@ function renderGame() {
     if (0 != mj.pCard[i].length) {
       for (var j = 0; j < mj.pCard[i].length; j++, x = x + CW) {
         drawCard(mj.pCard[i][j], x, py[i]);
-        if (0 == mj.state && mj.myPos == mj.posPick && mj.myPos == i) { // Show hotkey if this is my turn.
+        if (/*0 == mj.state && */mj.myPos == mj.posPick && mj.myPos == i) { // Show hotkey if this is my turn.
           drawHotkey(x, py[i], KEY_CHAR[j]);
         }
       }
@@ -145,6 +145,12 @@ function renderGame() {
   // Draw my game state.
   if (0 != mj.state) {
     var ox = 18, y = py[mj.myPos];
+    if (0 != mj.oCard[mj.myPos].length) {
+      ox += 2
+    }
+    if (-1 != mj.posPick) {
+      ox += 2 + CW;
+    }
     drawMyGameState(ox + CW * (mj.oCard[mj.myPos].length + mj.pCard[mj.myPos].length), y);
   }
 }
@@ -473,6 +479,9 @@ function tbLeaveGame() {
 
 window.onkeypress = function(e) {
   e = e || window.event;
+  if (!mj) {
+    return;
+  }
   if (' ' == e.key) {
     if (0 != mj.state) {
       mj.pass();
@@ -482,7 +491,7 @@ window.onkeypress = function(e) {
   } else {
     var i = KEY_CHAR.indexOf(e.key);
     if (0 != mj.state) {
-      var j = 0;
+      var j = mj.isMyTurn() ? mj.pCard[mj.myPos].length : 0;
       for (; j < mj.tinCard.length; j++) {
         if (i == j) {
           mj.tin(mj.tinCard[j]);
