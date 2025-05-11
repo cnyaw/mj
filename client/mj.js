@@ -484,7 +484,7 @@ window.onkeypress = function(e) {
   }
   var key;
   if (' ' == e.key) {
-    key = 1000;
+    key = mj.KEY_PASS;
   } else {
     key = KEY_CHAR.indexOf(e.key);
   }

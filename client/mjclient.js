@@ -18,6 +18,7 @@ function MahjongClient(addr, token) {
   this.state = 0;
   this.tinCard = this.gunCard = this.ponCard = this.chiCard = []; // Can tin|gun|pon|chi cards list.
   this.canLon = false;                     // Can lon.
+  this.KEY_PASS = 1000;
   // Event callback.
   this.onconnect = null;
   this.ondisconnect = null;
@@ -486,7 +487,7 @@ function MahjongClient(addr, token) {
   }
 
   this.onkeypress = function(key) {
-    if (1000 == key) {
+    if (this.KEY_PASS == key) {
       if (0 != mj.state) {
         mj.pass();
       } else if (mj.isMyTurn()) {
