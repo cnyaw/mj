@@ -7,6 +7,8 @@
 * web browser html5 test client
 * auto play AI support
 
+Demo link https://smallworld.idv.tw/game/mj/ (WIP)
+
 Game play video link https://www.youtube.com/watch?v=a24jGXnMdFs
 
 ![console](mj_console.png)
